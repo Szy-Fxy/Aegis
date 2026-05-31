@@ -1,4 +1,4 @@
-# Aegis v3.0.3
+# Aegis v3.0.4
 
 ## AI Development Governance System
 
@@ -542,6 +542,7 @@ Engineering Partner
 | 2026-05-31 | v3.0 | 路径 .trae→Aegis；SKILL.md 拆分；审查双版本；进程恢复；迭代退回；收尾仪式；并发 INDEX；存量代码协作；跨 IDE 安装脚本 |
 | 2026-05-31 | v3.0.1 | 四代理审查修复：命名规范化、消除 DRY、矩阵补维度、DevLog 强化、收尾失败处理、用户手册、提炼标准简化、一键安装 |
 | 2026-05-31 | v3.0.3 | 命名重构：Aegis_Protocol.md + Aegis_Specs/ + Aegis_Intro.md；安装脚本不复制到项目；强制 Checklist 协议入口 |
+| 2026-05-31 | v3.0.4 | L3-7 强化：07-verify 顶部强制验收标准速查表；收尾加步骤 0（文档完整性检查）；05-tasks 加验收对照；Protocol 加文档产出约束 |
 | 2026-05-31 | v3.0.2 | 融合 Karpathy Skills：完整 Aegis_Protocol.md 生成、.cursor/rules/aegis.mdc、Anti-Patterns 速查表、Key Insight 循环验证、README 升级、跨 IDE 支持矩阵、How to Know It's Working |
 
 ---

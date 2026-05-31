@@ -1,4 +1,4 @@
-﻿# Aegis v3.0.3 — 一键安装脚本
+﻿# Aegis v3.0.4 — 一键安装脚本
 # 用法: irm https://raw.githubusercontent.com/{你的用户名}/aegis/main/install.ps1 | iex
 #
 # 在你项目根目录运行。脚本会下载最新版 Aegis 到当前目录。
@@ -13,7 +13,7 @@ $ZipUrl  = "$RepoUrl/archive/refs/heads/$Branch.zip"
 $TempZip = "$env:TEMP\aegis-$Branch.zip"
 $TempDir = "$env:TEMP\aegis-$Branch"
 
-Write-Host "🛡️  Aegis v3.0.3 — 一键安装" -ForegroundColor Cyan
+Write-Host "🛡️  Aegis v3.0.4 — 一键安装" -ForegroundColor Cyan
 Write-Host "   仓库: $RepoUrl" -ForegroundColor Gray
 Write-Host ""
 
@@ -83,6 +83,6 @@ Write-Host "🧹 已清理安装脚本" -ForegroundColor Gray
 Remove-Item $TempZip -Force -ErrorAction SilentlyContinue
 
 Write-Host ""
-Write-Host "🛡️  Aegis v3.0.3 安装完成！" -ForegroundColor Green
+Write-Host "🛡️  Aegis v3.0.4 安装完成！" -ForegroundColor Green
 Write-Host ""
 Write-Host "   下一步：打开 AI 对话，正常提需求。AI 会自动按 Aegis 流程工作。"

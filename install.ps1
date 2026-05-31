@@ -1,4 +1,4 @@
-# Aegis v3.0.2 — 一键安装脚本
+﻿# Aegis v3.0.3 — 一键安装脚本
 # 用法: irm https://raw.githubusercontent.com/{你的用户名}/aegis/main/install.ps1 | iex
 #
 # 在你项目根目录运行。脚本会下载最新版 Aegis 到当前目录。
@@ -13,7 +13,7 @@ $ZipUrl  = "$RepoUrl/archive/refs/heads/$Branch.zip"
 $TempZip = "$env:TEMP\aegis-$Branch.zip"
 $TempDir = "$env:TEMP\aegis-$Branch"
 
-Write-Host "🛡️  Aegis v3.0.2 — 一键安装" -ForegroundColor Cyan
+Write-Host "🛡️  Aegis v3.0.3 — 一键安装" -ForegroundColor Cyan
 Write-Host "   仓库: $RepoUrl" -ForegroundColor Gray
 Write-Host ""
 
@@ -52,14 +52,54 @@ if (-not $ExtractedDir) {
 # 4. 移动 Aegis/ 到当前目录
 Move-Item $ExtractedDir.FullName "Aegis" -Force
 
-# 5. 创建 CLAUDE.md 入口（含完整行为准则）
+# 5. 创建 Aegis_Protocol.md 入口（强制 Checklist + 行为准则）
 $claudeContent = @"
-# CLAUDE.md
+# Aegis_Protocol.md
 
-> Aegis AI 开发治理系统 — 行为准则入口。AI 请同时加载 Aegis/skills/dev-workflow/SKILL.md。
-> **Tradeoff**: 这些准则偏向工程严谨而非交付速度。对于简单任务，不必全部执行。
+> ⚠️ **Aegis AI 开发治理系统 — 强制协议入口。本文件每项 Checklist 不可跳过。**
+> AI 同时必须加载 `Aegis/skills/dev-workflow/SKILL.md` 获取完整工作流规则。
+> **Tradeoff**: 简单任务（单行改值、typo 修复、L1 级别）不必全部执行。
 
-## 1. 先想再做 (Think Before Coding)
+---
+
+## ⚠️ 强制 Checklist
+
+### A. 对话启动（每轮对话开始时）
+
+```
+□ 1. 读取 Aegis/rules/DevLogs/ 下最新日期的 DevLog
+□ 2. 告知用户：「上次您在 {需求名} 的 {阶段}，是否继续？」
+□ 3. 如果 DevLog 为空，检查 Aegis_Specs/INDEX.md 是否有未完成的需求
+```
+
+### B. 需求操作（每次用户提需求时）
+
+```
+□ 4. 判定需求级别（L1 / L2 / L3）并告知用户
+□ 5. 立刻更新 Aegis_Specs/INDEX.md（新需求登记）
+□ 6. L2/L3：先出方案等你确认，不要直接写代码
+```
+
+### C. 阶段操作（每完成一个阶段时）
+
+```
+□ 7. L2/L3 每阶段结束 → 写 DevLog 到 Aegis/rules/DevLogs/
+□ 8. 每阶段结束 → 告知用户当前阶段号和下一步
+□ 9. L3 全部完成 → 执行收尾仪式（SKILL.md 中定义的 5 步骤）
+```
+
+### D. 自检（每次响应前过一遍）
+
+```
+□ 当前在哪个阶段？INDEX 更新了没？DevLog 写了没？
+  → 有遗漏先补，再继续。
+```
+
+---
+
+## AI 行为准则
+
+### 1. 先想再做 (Think Before Coding)
 
 **不假设、不隐藏困惑、呈现权衡。**
 
@@ -68,7 +108,7 @@ $claudeContent = @"
 - 如果有更简单的方案，说出来。该反驳时就反驳。
 - 如果不清楚，停下来。指出哪里困惑。问。
 
-## 2. 简洁至上 (Simplicity First)
+### 2. 简洁至上 (Simplicity First)
 
 **最小代码解决问题。不写推测性代码。**
 
@@ -80,7 +120,7 @@ $claudeContent = @"
 
 自问：「一个高级工程师会觉得这是过度设计吗？」如果是，简化。
 
-## 3. 精准修改 (Surgical Changes)
+### 3. 精准修改 (Surgical Changes)
 
 **只动必须动的。只清理你自己造成的烂摊子。**
 
@@ -92,7 +132,7 @@ $claudeContent = @"
 
 测试标准：每一行改动都应该能追溯到用户的需求。
 
-## 4. 目标驱动 (Goal-Driven Execution)
+### 4. 目标驱动 (Goal-Driven Execution)
 
 **定义成功标准。循环直到验证通过。**
 
@@ -109,35 +149,38 @@ $claudeContent = @"
 3. [步骤] → 验证: [检查点]
 ```
 
-强成功标准让 AI 能独立循环验证。弱标准需要不断人工澄清。
-
 ---
 
 **这些准则生效的标志：** diff 里不再有无关改动、不再因过度设计而重写、澄清性问题出现在实现之前。
 "@
-if (-not (Test-Path "CLAUDE.md")) {
-    Set-Content -Path "CLAUDE.md" -Value $claudeContent
-    Write-Host "✅ CLAUDE.md（入口 + 行为准则）" -ForegroundColor Green
+if (-not (Test-Path "Aegis_Protocol.md")) {
+    Set-Content -Path "Aegis_Protocol.md" -Value $claudeContent
+    Write-Host "✅ Aegis_Protocol.md（入口 + 行为准则）" -ForegroundColor Green
 } else {
-    Write-Host "⚠️  CLAUDE.md 已存在，跳过。" -ForegroundColor Yellow
+    Write-Host "⚠️  Aegis_Protocol.md 已存在，跳过。" -ForegroundColor Yellow
 }
 
-# 6. 创建 specs/INDEX.md
-New-Item -ItemType Directory -Force -Path "specs" | Out-Null
-if (-not (Test-Path "specs/INDEX.md")) {
-    Set-Content -Path "specs/INDEX.md" -Value @"
+# 6. 创建 Aegis_Specs/INDEX.md
+New-Item -ItemType Directory -Force -Path "Aegis_Specs" | Out-Null
+if (-not (Test-Path "Aegis_Specs/INDEX.md")) {
+    Set-Content -Path "Aegis_Specs/INDEX.md" -Value @"
 # 需求索引
 
 | ID | 需求名 | 级别 | 状态 | 开始日期 | 最后活动 |
 |----|--------|------|------|----------|----------|
 "@
-    Write-Host "✅ specs/INDEX.md" -ForegroundColor Green
+    Write-Host "✅ Aegis_Specs/INDEX.md" -ForegroundColor Green
 }
 
-# 7. 清理
+# 7. 清理安装脚本（不留在用户项目里）
+Remove-Item "Aegis/install.ps1" -Force -ErrorAction SilentlyContinue
+Remove-Item "Aegis/install-aegis.ps1" -Force -ErrorAction SilentlyContinue
+Write-Host "🧹 已清理安装脚本" -ForegroundColor Gray
+
+# 8. 清理临时文件
 Remove-Item $TempZip -Force -ErrorAction SilentlyContinue
 
 Write-Host ""
-Write-Host "🛡️  Aegis v3.0.2 安装完成！" -ForegroundColor Green
+Write-Host "🛡️  Aegis v3.0.3 安装完成！" -ForegroundColor Green
 Write-Host ""
 Write-Host "   下一步：打开 AI 对话，正常提需求。AI 会自动按 Aegis 流程工作。"

@@ -1,6 +1,6 @@
-<#
+﻿<#
 .SYNOPSIS
-    Aegis v3.0.2 — 跨 IDE AI 编程助手开发治理系统安装脚本
+    Aegis v3.0.3 — 跨 IDE AI 编程助手开发治理系统安装脚本
 .DESCRIPTION
     在新项目根目录运行此脚本，自动创建 Aegis 全套目录结构和规则文件。
     不依赖任何特定 IDE（支持 SOLO / OpenHanako / OpenCode 等）。
@@ -37,7 +37,7 @@ if ($TechStack -eq "") {
     $TechStack = $AllTechStacks -join ","
 }
 
-Write-Host "🛡️  Aegis v3.0.2 — 安装中..." -ForegroundColor Cyan
+Write-Host "🛡️  Aegis v3.0.3 — 安装中..." -ForegroundColor Cyan
 Write-Host "   项目名: $ProjectName" -ForegroundColor Gray
 Write-Host "   技术栈: $($AllTechStacks -join ', ')（全部）" -ForegroundColor Gray
 Write-Host ""
@@ -58,7 +58,7 @@ $CoreFiles = @{
     "Aegis/rules/DevLogs/README.md" = "$ScriptDir/rules/DevLogs/README.md"
     "Aegis/rules/TempData/README.md" = "$ScriptDir/rules/TempData/README.md"
     "Aegis/.cursor/rules/aegis.mdc" = "$ScriptDir/.cursor/rules/aegis.mdc"
-    "Aegis/Aegis.md"           = "$ScriptDir/Aegis.md"
+    "Aegis/Aegis_Intro.md"           = "$ScriptDir/Aegis_Intro.md"
 }
 
 # Skill files
@@ -162,31 +162,27 @@ if ($TechStack) {
     }
 }
 
-# Copy install script itself
-Copy-Item $MyInvocation.MyCommand.Path "Aegis/install-aegis.ps1" -Force
-Write-Host "  ✅ Aegis/install-aegis.ps1"
-
-# Create specs directory and INDEX.md
-New-Item -ItemType Directory -Force -Path "specs" | Out-Null
+# Create Aegis_Specs directory and INDEX.md
+New-Item -ItemType Directory -Force -Path "Aegis_Specs" | Out-Null
 $indexContent = @"
 # 需求索引
 
 | ID | 需求名 | 级别 | 状态 | 开始日期 | 最后活动 |
 |----|--------|------|------|----------|----------|
 "@
-$indexPath = "specs/INDEX.md"
+$indexPath = "Aegis_Specs/INDEX.md"
 if (-not (Test-Path $indexPath)) {
     Set-Content -Path $indexPath -Value $indexContent
-    Write-Host "  ✅ specs/INDEX.md"
+    Write-Host "  ✅ Aegis_Specs/INDEX.md"
 } else {
-    Write-Host "  ⚠️  specs/INDEX.md 已存在，跳过"
+    Write-Host "  ⚠️  Aegis_Specs/INDEX.md 已存在，跳过"
 }
 
 # Generate README.md
 $readmeContent = @"
 # $ProjectName — 项目入口
 
-> 本项目使用 [Aegis v3.0.2](Aegis/Aegis.md) AI 开发治理系统。
+> 本项目使用 [Aegis v3.0.3](Aegis/Aegis_Intro.md) AI 开发治理系统。
 > AI 请按 `Aegis/skills/dev-workflow/SKILL.md` 加载规则。
 
 ---
@@ -227,14 +223,54 @@ $readmeContent += @"
 Set-Content -Path "Aegis/README.md" -Value $readmeContent
 Write-Host "  ✅ Aegis/README.md"
 
-# Create CLAUDE.md with full behavioral guidelines
+# Create Aegis_Protocol.md with mandatory checklist + behavioral guidelines
 $claudeContent = @"
-# CLAUDE.md
+# Aegis_Protocol.md
 
-> Aegis AI 开发治理系统 — 行为准则入口。AI 请同时加载 Aegis/skills/dev-workflow/SKILL.md。
-> **Tradeoff**: 这些准则偏向工程严谨而非交付速度。对于简单任务，不必全部执行。
+> ⚠️ **Aegis AI 开发治理系统 — 强制协议入口。本文件每项 Checklist 不可跳过。**
+> AI 同时必须加载 `Aegis/skills/dev-workflow/SKILL.md` 获取完整工作流规则。
+> **Tradeoff**: 简单任务（单行改值、typo 修复、L1 级别）不必全部执行。
 
-## 1. 先想再做 (Think Before Coding)
+---
+
+## ⚠️ 强制 Checklist
+
+### A. 对话启动（每轮对话开始时）
+
+```
+□ 1. 读取 Aegis/rules/DevLogs/ 下最新日期的 DevLog
+□ 2. 告知用户：「上次您在 {需求名} 的 {阶段}，是否继续？」
+□ 3. 如果 DevLog 为空，检查 Aegis_Specs/INDEX.md 是否有未完成的需求
+```
+
+### B. 需求操作（每次用户提需求时）
+
+```
+□ 4. 判定需求级别（L1 / L2 / L3）并告知用户
+□ 5. 立刻更新 Aegis_Specs/INDEX.md（新需求登记）
+□ 6. L2/L3：先出方案等你确认，不要直接写代码
+```
+
+### C. 阶段操作（每完成一个阶段时）
+
+```
+□ 7. L2/L3 每阶段结束 → 写 DevLog 到 Aegis/rules/DevLogs/
+□ 8. 每阶段结束 → 告知用户当前阶段号和下一步
+□ 9. L3 全部完成 → 执行收尾仪式（SKILL.md 中定义的 5 步骤）
+```
+
+### D. 自检（每次响应前过一遍）
+
+```
+□ 当前在哪个阶段？INDEX 更新了没？DevLog 写了没？
+  → 有遗漏先补，再继续。
+```
+
+---
+
+## AI 行为准则
+
+### 1. 先想再做 (Think Before Coding)
 
 **不假设、不隐藏困惑、呈现权衡。**
 
@@ -243,7 +279,7 @@ $claudeContent = @"
 - 如果有更简单的方案，说出来。该反驳时就反驳。
 - 如果不清楚，停下来。指出哪里困惑。问。
 
-## 2. 简洁至上 (Simplicity First)
+### 2. 简洁至上 (Simplicity First)
 
 **最小代码解决问题。不写推测性代码。**
 
@@ -255,7 +291,7 @@ $claudeContent = @"
 
 自问：「一个高级工程师会觉得这是过度设计吗？」如果是，简化。
 
-## 3. 精准修改 (Surgical Changes)
+### 3. 精准修改 (Surgical Changes)
 
 **只动必须动的。只清理你自己造成的烂摊子。**
 
@@ -267,7 +303,7 @@ $claudeContent = @"
 
 测试标准：每一行改动都应该能追溯到用户的需求。
 
-## 4. 目标驱动 (Goal-Driven Execution)
+### 4. 目标驱动 (Goal-Driven Execution)
 
 **定义成功标准。循环直到验证通过。**
 
@@ -284,22 +320,20 @@ $claudeContent = @"
 3. [步骤] → 验证: [检查点]
 ```
 
-强成功标准让 AI 能独立循环验证。弱标准需要不断人工澄清。
-
 ---
 
 **这些准则生效的标志：** diff 里不再有无关改动、不再因过度设计而重写、澄清性问题出现在实现之前。
 "@
-if (-not (Test-Path "CLAUDE.md")) {
-    Set-Content -Path "CLAUDE.md" -Value $claudeContent
-    Write-Host "  ✅ CLAUDE.md（入口 + 行为准则）"
+if (-not (Test-Path "Aegis_Protocol.md")) {
+    Set-Content -Path "Aegis_Protocol.md" -Value $claudeContent
+    Write-Host "  ✅ Aegis_Protocol.md（入口 + 行为准则）"
 } else {
-    Write-Host "  ⚠️  CLAUDE.md 已存在，跳过"
+    Write-Host "  ⚠️  Aegis_Protocol.md 已存在，跳过"
 }
 
 Write-Host ""
-Write-Host "🛡️  Aegis v3.0.2 安装完成！" -ForegroundColor Green
+Write-Host "🛡️  Aegis v3.0.3 安装完成！" -ForegroundColor Green
 Write-Host "   项目: $ProjectName"
 Write-Host "   技术栈: $($AllTechStacks -join ', ')（全部）"
 Write-Host ""
-Write-Host "   下一步：在项目根目录创建 specs/INDEX.md 开始使用"
+Write-Host "   下一步：在项目根目录创建 Aegis_Specs/INDEX.md 开始使用"

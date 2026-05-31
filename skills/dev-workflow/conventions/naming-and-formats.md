@@ -1,7 +1,7 @@
 # 命名与格式约定
 
-> **单一事实来源** — DevLogs、TempData、specs 目录的命名和格式规范。
-> SKILL.md、Aegis.md、各 README 中不再重复定义，统一引用本文。
+> **单一事实来源** — DevLogs、TempData、Aegis_Specs 目录的命名和格式规范。
+> SKILL.md、Aegis_Intro.md、各 README 中不再重复定义，统一引用本文。
 
 ---
 
@@ -101,7 +101,7 @@ Aegis/rules/TempData/{主题}_{YYYY-MM-DD}.md
 
 ---
 
-## specs/INDEX.md
+## Aegis_Specs/INDEX.md
 
 ### 格式
 

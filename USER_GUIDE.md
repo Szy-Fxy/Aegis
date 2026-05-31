@@ -1,4 +1,4 @@
-# Aegis 用户手册
+﻿# Aegis 用户手册
 
 > 给人类看的。一步步教你如何在新项目中用上 Aegis。
 > 预计阅读：3 分钟。操作：2 分钟。
@@ -23,15 +23,16 @@ irm https://raw.githubusercontent.com/Szy-Fxy/Aegis/main/install.ps1 | iex
 
 ```
 你的新项目/
-├── Aegis/          ← 安装脚本会自动创建
-├── src/            ← 你原来的代码
-└── ...
+ Aegis/           安装脚本会自动创建
+ src/             你原来的代码
+ ...
 ```
 
-一键安装会自动创建 `CLAUDE.md` 入口文件。安装完直接开始对话即可。
+一键安装会自动创建含完整行为准则的 `CLAUDE.md` 入口文件。手动复制的话，在根目录创建 `CLAUDE.md`，内容参考 `Aegis/README.md` 或直接写：
 
-> 手动复制的话，需要自己在根目录创建 `CLAUDE.md`，写一行：
-> `AI 请按 Aegis/skills/dev-workflow/SKILL.md 加载规则。`
+```
+AI 请按 Aegis/skills/dev-workflow/SKILL.md 加载规则。
+```
 
 ### 开始对话
 
@@ -50,21 +51,25 @@ AI：好的，我判定这是 L2 需求，先出一份方案给你看...
 
 ```
 你的新项目/
-├── Aegis/
-│   ├── README.md              ← AI 入口（AI 读这个）
-│   ├── USER_GUIDE.md          ← 本文件
-│   ├── QUICK_START.md         ← 30 秒速览
-│   ├── install-aegis.ps1      ← 安装脚本（分发用，日常不需要）
-│   ├── rules/
-│   │   ├── global.md          ← 全局代码规范
-│   │   ├── TechStack/         ← 5 个技术栈规范
-│   │   ├── TempData/          ← 临时资料（AI 自动管理）
-│   │   └── DevLogs/           ← 开发日志（AI 自动写）
-│   └── skills/
-│       └── dev-workflow/      ← 工作流引擎
-├── specs/
-│   └── INDEX.md               ← 需求索引（AI 自动维护）
-└── 你原来的代码...
+ Aegis/
+    README.md               AI 入口（AI 读这个）
+    USER_GUIDE.md           本文件
+    QUICK_START.md          30 秒速览
+    install.ps1             一键安装脚本
+    install-aegis.ps1       离线备用脚本
+    rules/
+       global.md           全局代码规范
+       TechStack/          5 个技术栈规范
+       TempData/           临时资料（AI 自动管理）
+       DevLogs/            开发日志（AI 自动写）
+    skills/
+       dev-workflow/       工作流引擎
+    .cursor/
+        rules/
+            aegis.mdc       Cursor IDE 自动规则
+ specs/
+    INDEX.md                需求索引（AI 自动维护）
+ 你原来的代码...
 ```
 
 大部分目录你不需要碰。你只管在 `specs/` 下看 AI 产出的需求文档就行。
@@ -100,8 +105,8 @@ AI 会给你看方案的「口语版」解释，你只需要判断：
 | 你说的 | AI 判定 | AI 做什么 |
 |--------|:------:|-----------|
 | 「把那个常量改成 100」 | L1 | 直接改代码，不废话 |
-| 「加一个导出 CSV 的功能」 | L2 | 出方案 → 确认 → 写代码 → 验证 |
-| 「我要重构整个架构」 | L3 | 分 7 步出文档 → 逐步审核 → 写代码 → 验证 |
+| 「加一个导出 CSV 的功能」 | L2 | 出方案  确认  写代码  验证 |
+| 「我要重构整个架构」 | L3 | 分 7 步出文档  逐步审核  写代码  验证 |
 
 ---
 
@@ -135,9 +140,9 @@ AI 会退回重做，之前的文档不会丢。
 ## 你需要记住的只有三句话
 
 ```
-「我要做 XXX」   → 提需求
-「好」           → 审核通过
-「回到上一步」   → 不满意、退回去
+「我要做 XXX」    提需求
+「好」            审核通过
+「回到上一步」    不满意、退回去
 ```
 
 就这三句。其他全交给 AI。

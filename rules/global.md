@@ -1,15 +1,108 @@
 # 全局通用准则
 
 > 所有技术栈、所有项目均适用。优先级高于各技术栈规则。
+>
+> **Tradeoff**: 这些准则偏向工程严谨而非交付速度。对于简单任务（typo修复、单行改动），无需全部执行。
 
 ---
 
-## 代码风格
+## AI 行为准则
 
-- 不添加无意义注释 — 注释只解释「为什么这样写」不解释「这段代码做什么」
-- 命名清晰自解释，不追求缩写。函数名要能望文生义
-- 保持和已有代码一致的风格，不做不必要的格式化或重构
-- 函数保持短小精悍，做好一件事（但不能为了短而强行拆碎语义完整的逻辑）
+> 来自 Karpathy 对 LLM 编程常见错误的总结。这些告诉 AI **怎么写代码**。
+
+### 1. 先想再做 (Think Before Coding)
+
+```
+❌ 不假设、不隐藏困惑、不要默默选一个解释就开始写代码
+✅ 不确定就问。多种理解就列出来。有更简单的方案就说。
+```
+
+```python
+# 用户说："加一个导出用户数据的功能"
+
+# ❌ AI 默默假设：导出全部用户、JSON 格式、写到本地文件
+def export_users():
+    users = User.query.all()
+    with open('users.json', 'w') as f:
+        json.dump([u.to_dict() for u in users], f)
+
+# ✅ AI 先反问：
+# 1. 导出全部用户还是筛选后的？
+# 2. JSON / CSV / Excel？
+# 3. 浏览器下载还是后台任务发邮件？
+```
+
+### 2. 简洁至上 (Simplicity First)
+
+```
+❌ 不过度设计、不加没被要求的功能、不为「未来可能需要」写抽象
+✅ 最小代码解决问题。200 行能写成 50 行就重写
+```
+
+```python
+# 用户说："写个折扣计算函数"
+
+# ❌ 过度设计：策略模式 + ABC + dataclass，30 行框架代码只为了算 10% 折扣
+from abc import ABC, abstractmethod
+class DiscountStrategy(ABC):
+    @abstractmethod
+    def calculate(self, amount: float) -> float: ...
+
+# ✅ 简洁方案：
+def calculate_discount(amount: float, percent: float) -> float:
+    return amount * (percent / 100)
+```
+
+> 自问：「一个高级工程师会觉得这是过度设计吗？」如果是，简化。
+
+### 3. 精准修改 (Surgical Changes)
+
+```
+❌ 不改无关代码、不顺手格式化、不「顺便」重构、不改注释
+✅ 只动你该动的。每行改动都应该能追溯到用户的需求
+```
+
+```typescript
+// 用户说："修复邮件为空时崩溃的 bug"
+
+// ❌ 顺手加了 username 验证、改了引号风格、加了 docstring
+function validateUser(userData: any): boolean {
+    /** Validate user data. */       // ← 没叫加
+    const email = userData.email.trim()  // ← 改了引号风格
+    if (!email || !email.includes("@")) throw Error("Invalid email")
+    if (!userData.username || userData.username.length < 3) throw Error("Username too short")  // ← 没叫加
+    return true
+}
+
+// ✅ 精准：只修 email 空值
+function validateUser(userData) {
+    const email = userData.email || ''  // ← 只加了这一行
+    if (!email || !email.trim()) throw Error("Email required")
+    ...
+}
+```
+
+### 4. 目标驱动 (Goal-Driven Execution)
+
+```
+❌ 不把"做 XXX"当成目标。目标必须可验证
+✅ 把任务变成可验证的检查点，循环直到全部通过
+```
+
+| 模糊任务 | 可验证目标 |
+|----------|-----------|
+| "加校验" | "写无效输入测试 → 让测试通过" |
+| "修Bug" | "写能复现 Bug 的测试 → 让测试通过" |
+| "重构X" | "重构前后测试全部通过" |
+
+```
+多步骤任务输出计划：
+1. 加基础限流 → 验证: 10 次请求后返回 429
+2. 提取为中间件 → 验证: 所有接口受保护
+3. 升级 Redis 后端 → 验证: 重启后限流状态不丢失
+```
+
+---
 
 ## 架构原则（SOLID + 设计模式）
 
@@ -22,114 +115,106 @@
 
 - **正确理解**：「一个类只应有一个引起它变化的原因」，不是「一个类只做一件事」
 - 判断标准：如果你能用「因为……所以需要改这个类」来描述变更，且只有一种「因为」，则满足 SRP
-- 例如：`GameManager` 同时管 UI、分数、游戏胜负、敌人计数 = 4 个变化原因 → 违反 SRP
 
 ```csharp
-// ❌ 违反 SRP：这个类因为「计分规则变了」「UI改了」「音效改了」都需要修改
+// ❌ 违反 SRP：计分规则变了、UI 改了、音效改了 → 都需要修改这个类
 class GameManager {
-    void AddScore(int points) { ... }
-    void UpdateScoreUI() { ... }
-    void PlayScoreSound() { ... }
+    void AddScore(int points)           { /* 计分逻辑 */ }
+    void UpdateScoreUI()                { /* UI 刷新 */ }
+    void PlayScoreSound()               { /* 音效播放 */ }
 }
 
 // ✅ 符合 SRP：每个类只有一个变化原因
-class ScoreModel { int Value; void Add(int p); }        // 变化原因：计分规则
-class ScoreUI { void Display(int score); }               // 变化原因：UI 设计
-class ScoreAudio { void PlayCollectSound(); }            // 变化原因：音效需求
+class ScoreModel  { int Value; void Add(int p); }          // 变化原因：计分规则
+class ScoreUI     { void Display(int score); }              // 变化原因：UI 设计
+class ScoreAudio  { void PlayCollectSound(); }              // 变化原因：音效需求
 ```
 
-> ⚠️ 代价：过度拆分会导致类爆炸和调用链过长。当某个「变化原因」从未独立变化过，不需要拆。
+> ⚠️ 代价：过度拆分会导致类爆炸。当某个「变化原因」从未独立变化过，不需要拆。
 
 ### OCP：开闭原则
 
 > Open for extension, closed for modification.
 
-- 对扩展开放：新增行为时不需要改已有代码
-- 对修改关闭：已有代码稳定后不应再被改动
-- 实现手段：接口/抽象类 + 策略模式/模版方法模式
-
 ```csharp
 // ❌ 违反 OCP：每加一种敌人就要改 switch
 void SpawnEnemy(string type) {
     switch(type) {
-        case "tank": ... break;
-        case "drone": ... break;
-        // 加新敌人 → 改这里
+        case "tank":  /* 坦克逻辑 */ break;
+        case "drone": /* 无人机逻辑 */ break;
+        // 新敌人 → 改这里 → 可能引入 Bug
     }
 }
 
 // ✅ 符合 OCP：新敌人 = 新类，不改已有代码
 interface IEnemy { void Spawn(); }
-class TankEnemy : IEnemy { ... }
-class DroneEnemy : IEnemy { ... }
+class TankEnemy  : IEnemy { public void Spawn() { /* 坦克 */ } }
+class DroneEnemy : IEnemy { public void Spawn() { /* 无人机 */ } }
 ```
 
-> ⚠️ 代价：过度抽象。2-3 种变体时用 switch 更清晰，5+ 种且还在增长时才值得抽接口。
+> ⚠️ 2-3 种变体用 switch 更清晰，5+ 种且还在增长时才值得抽接口。
 
 ### LSP：里氏替换原则
 
 > Subtypes must be substitutable for their base types.
 
-- 子类应该能无缝替换父类，不破坏程序的正确性
-- 违反信号：`if (obj is SpecificType) { 特殊处理… }`
-
 ```csharp
-// ❌ 违反 LSP：矩形是正方形的前提不成立
+// ❌ 违反 LSP：矩形能独立设宽高，正方形不能 → Square 不能替换 Rectangle
 class Rectangle {
-    public virtual int Width { get; set; }
+    public virtual int Width  { get; set; }
     public virtual int Height { get; set; }
 }
 class Square : Rectangle {
-    public override int Width { set { base.Width = base.Height = value; } }  // 破坏了 Rectangle 的语义
+    public override int Width  { set { base.Width = base.Height = value; } }
+    public override int Height { set { base.Width = base.Height = value; } }
 }
 
-// ✅ 符合 LSP：独立的抽象
+// ✅ 符合 LSP：各自独立，不强行继承
 interface IShape { int Area(); }
+class Rectangle : IShape { ... }
+class Square    : IShape { ... }
 ```
 
-> ⚠️ 现实中最常见的违反是「空方法覆写」——子类覆写了一个方法但什么都不做。
+> ⚠️ 最常见违反：子类覆写方法但什么都不做（空方法）。
 
 ### ISP：接口隔离原则
 
 > Many specific interfaces are better than one general interface.
 
-- 客户端不应该被迫依赖它不使用的方法
-- 大接口拆成多个小接口，按需实现
-- 判断方法：类有没有实现接口的某个方法时「空着」或「抛 NotImplementedException」？有就说明接口太大了
-
 ```csharp
-// ❌ 违反 ISP
+// ❌ 违反 ISP：士兵被迫实现「飞」的方法
 interface IUnit {
     void Move();
     void Attack();
     void Heal();
-    void Fly();
+    void Fly();      // ← 士兵不会飞
 }
-class Soldier : IUnit { void Fly() { /* 士兵不会飞！*/ } }
+class Soldier : IUnit {
+    void Fly() { /* 空着，抛异常 */ }  // ← 判断方法就来自这里
+}
 
-// ✅ 符合 ISP
-interface IMovable { void Move(); }
+// ✅ 符合 ISP：按职责拆小接口
+interface IMovable  { void Move(); }
 interface IAttacker { void Attack(); }
-interface IFlyable { void Fly(); }
+interface IFlyable  { void Fly(); }
 class Soldier : IMovable, IAttacker { ... }
+class Drone   : IMovable, IFlyable  { ... }
 ```
 
 ### DIP：依赖倒转原则
 
 > Depend on abstractions, not on concretions.
 
-- 高层模块不依赖低层模块，两者都依赖抽象
-- 具体手段：依赖注入（DI）、接口
-
 ```csharp
-// ❌ 违反 DIP：Tank 直接依赖具体的 Bullet 类
+// ❌ 违反 DIP：Tank 直接 new Bullet()，换子弹类型要改 Tank 代码
 class Tank {
     void Shoot() { new Bullet().Fire(); }
 }
 
-// ✅ 符合 DIP：依赖 IBullet 抽象
+// ✅ 符合 DIP：依赖 IBulletFactory 抽象
 class Tank {
     readonly IBulletFactory _factory;
+    public Tank(IBulletFactory factory) { _factory = factory; }
     void Shoot() { _factory.Create().Fire(); }
 }
 ```
@@ -138,11 +223,27 @@ class Tank {
 
 > Favor object composition over class inheritance. — GoF
 
-- 用「持有其他对象的引用 + 委托调用」替代继承链
-- 继承的问题：编译时绑定、破坏封装、深层继承链难维护
-- 组合的优势：运行时灵活替换、职责清晰
+- 用「持有引用 + 委托调用」替代深层继承链
+- 继承的代价：编译时绑定、破坏封装、深层链难维护
 
-> ⚠️ 当「子类 是 父类的一种（is-a）」且行为差异不大时，继承是合适的。别为了「复用代码」而继承。
+```csharp
+// ❌ 继承滥用：为了复用代码而继承
+class Bird {
+    void Fly() { /* 飞 */ }
+}
+class Penguin : Bird {
+    void Fly() { throw new Exception("企鹅不会飞"); }  // ← LSP 一起违反
+}
+
+// ✅ 组合：行为是可替换的组件
+interface IFlyBehavior { void Fly(); }
+class Bird {
+    IFlyBehavior _flyBehavior;
+    void PerformFly() { _flyBehavior.Fly(); }
+}
+```
+
+> ⚠️ 当「子类是父类的一种（is-a）」且行为差异不大时，继承是合适的。
 
 ### 迪米特法则（最少知识原则）
 
@@ -156,6 +257,7 @@ class Tank {
 - **不要过度设计**：一个接口只有一个实现，就不要抽接口
 - **不要提前抽象**：等第二个场景出现时再考虑抽象，而不是猜未来
 - **不要为了模式而模式**：如果最简单的写法已经够清晰，就用最简单的
+- **不要顺手格式化**：修 Bug 时只修 Bug，不改代码风格
 - **防御性保留**：不确定是否该删的代码，标记 `// TODO(@owner, YYYY-MM-DD): 确认是否可删除`，超过 30 天未确认的视为可清理
 
 ## 依赖管理

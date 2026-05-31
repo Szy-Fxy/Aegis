@@ -1,0 +1,13 @@
+# Aegis 仓库 .gitignore
+
+# 操作系统
+.DS_Store
+Thumbs.db
+
+# 开发日志（每个项目自己维护）
+rules/DevLogs/*.md
+!rules/DevLogs/README.md
+
+# 临时资料（每个项目自己维护）
+rules/TempData/*.md
+!rules/TempData/README.md

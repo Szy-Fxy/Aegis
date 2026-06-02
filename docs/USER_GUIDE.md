@@ -28,7 +28,7 @@ irm https://raw.githubusercontent.com/Szy-Fxy/Aegis/main/install.ps1 | iex
  ...
 ```
 
-一键安装会自动创建含完整行为准则的 `Aegis_Protocol.md` 入口文件。手动复制的话，在根目录创建 `Aegis_Protocol.md`，内容参考 `Aegis/docs/Aegis_Protocol.md` 或直接写：
+一键安装会自动创建 `AGENTS.md`（跨平台 AI 通用入口）和 `Aegis_Specs/INDEX.md`。手动复制的话，在根目录创建 `AGENTS.md`，内容参考 `Aegis/AGENTS.md` 或直接写：
 
 ```
 AI 请按 Aegis/skills/dev-workflow/SKILL.md 加载规则。
@@ -47,19 +47,53 @@ AI：好的，我判定这是 L2 需求，先出一份方案给你看...
 
 ---
 
+## 激活 Aegis（不同平台）
+
+### 通用方法
+
+确保项目根目录存在 `AGENTS.md`。AI 对话开始时，提示 "请按 AGENTS.md 加载规则"。
+
+### 平台特定方法
+
+| 平台 | 激活方式 |
+|------|----------|
+| **Claude Code** | 安装脚本会自动生成 `AGENTS.md` / `CLAUDE.md`，Claude 自动读取 |
+| **Cursor IDE** | 内置 `.cursor/rules/aegis.mdc`，自动加载（`alwaysApply: true`） |
+| **HanaAgent / Trae** | 安装 Aegis Boot Skill（见下方） |
+| **GitHub Copilot** | 安装脚本可生成 `.github/copilot-instructions.md` |
+| **Windsurf** | 安装脚本可生成 `.windsurfrules` |
+| **其他工具** | 所有规则均为 Markdown，任意工具可读 |
+
+### Boot Skill 安装示例（HanaAgent / Trae）
+
+如果 AI 不自动走 Aegis 流程，安装 Boot Skill：
+
+```powershell
+# 1. 将 Aegis/skills/aegis-boot/ 复制到平台的 skills 目录
+# 2. 在技能管理页面导入 SKILL.md
+# 3. 启用技能
+
+# 示例（HanaAgent）：
+1. 打开 HanaAgent → 技能 → 导入
+2. 选择文件：Aegis/skills/aegis-boot/SKILL.md
+3. 启用技能 → 之后 AI 处理开发任务时自动激活 Aegis
+```
+
+---
+
 ## 安装后你的项目长这样
 
 ```
 你的新项目/
  Aegis/
     README.md               AI 入口（AI 读这个）
+    AGENTS.md               跨平台 AI 通用入口
     install.ps1             一键安装脚本
     install-aegis.ps1       离线备用脚本
     docs/
        USER_GUIDE.md        本文件
        QUICK_START.md       30 秒速览
        Aegis_Intro.md       项目详细介绍
-       Aegis_Protocol.md    强制协议入口
     rules/
        global.md            全局代码规范
        TechStack/           9 个技术栈规范
@@ -67,11 +101,13 @@ AI：好的，我判定这是 L2 需求，先出一份方案给你看...
        DevLogs/             开发日志（AI 自动写）
     skills/
        dev-workflow/        工作流引擎
+       aegis-boot/          启动技能（可选，HanaAgent/Trae 等平台）
     .cursor/
         rules/
             aegis.mdc        Cursor IDE 自动规则
  Aegis_Specs/
     INDEX.md                需求索引（AI 自动维护）
+ AGENTS.md                  跨平台 AI 入口（安装脚本生成）
  你原来的代码...
 ```
 
@@ -149,6 +185,22 @@ AI 会退回重做，之前的文档不会丢。
 ```
 
 就这三句。其他全交给 AI。
+
+---
+
+## VCS 忽略配置
+
+将以下内容添加到你的 `.gitignore`（可选但推荐）：
+
+```
+# Aegis 本地数据（不提交）
+Aegis/rules/DevLogs/*.md
+!Aegis/rules/DevLogs/README.md
+Aegis/rules/TempData/*.md
+!Aegis/rules/TempData/README.md
+```
+
+**建议提交**的文件：`AGENTS.md`、`Aegis_Specs/`、`Aegis/`（除 DevLogs/ 和 TempData/ 外）。
 
 ---
 

@@ -13,7 +13,7 @@ $ZipUrl  = "$RepoUrl/archive/refs/heads/$Branch.zip"
 $TempZip = "$env:TEMP\aegis-$Branch.zip"
 $TempDir = "$env:TEMP\aegis-$Branch"
 
-Write-Host "🛡️  Aegis v3.0.4 — 一键安装" -ForegroundColor Cyan
+Write-Host "🛡️  Aegis v3.0.5 — 一键安装" -ForegroundColor Cyan
 Write-Host "   仓库: $RepoUrl" -ForegroundColor Gray
 Write-Host ""
 
@@ -52,15 +52,14 @@ if (-not $ExtractedDir) {
 # 4. 移动 Aegis/ 到当前目录
 Move-Item $ExtractedDir.FullName "Aegis" -Force
 
-# 5. 复制 Aegis_Protocol.md 到项目根目录（然后删除 Aegis/docs/ 内的副本）
-if (-not (Test-Path "Aegis_Protocol.md")) {
-    Copy-Item "Aegis/docs/Aegis_Protocol.md" "." -Force
-    Remove-Item "Aegis/docs/Aegis_Protocol.md" -Force
-    Write-Host "✅ Aegis_Protocol.md（入口 + 行为准则）" -ForegroundColor Green
+# 5. 复制 AGENTS.md 到项目根目录（跨平台 AI 通用入口）
+if (-not (Test-Path "AGENTS.md")) {
+    Copy-Item "Aegis/AGENTS.md" "." -Force
+    Write-Host "✅ AGENTS.md（AI 通用入口）" -ForegroundColor Green
 } else {
-    Write-Host "⚠️  Aegis_Protocol.md 已存在，跳过。" -ForegroundColor Yellow
-    Remove-Item "Aegis/docs/Aegis_Protocol.md" -Force -ErrorAction SilentlyContinue
+    Write-Host "⚠️  AGENTS.md 已存在，跳过。" -ForegroundColor Yellow
 }
+Remove-Item "Aegis/AGENTS.md" -Force -ErrorAction SilentlyContinue
 
 # 6. 创建 Aegis_Specs/INDEX.md
 New-Item -ItemType Directory -Force -Path "Aegis_Specs" | Out-Null
@@ -83,6 +82,6 @@ Write-Host "🧹 已清理安装脚本" -ForegroundColor Gray
 Remove-Item $TempZip -Force -ErrorAction SilentlyContinue
 
 Write-Host ""
-Write-Host "🛡️  Aegis v3.0.4 安装完成！" -ForegroundColor Green
+Write-Host "🛡️  Aegis v3.0.5 安装完成！" -ForegroundColor Green
 Write-Host ""
 Write-Host "   下一步：打开 AI 对话，正常提需求。AI 会自动按 Aegis 流程工作。"

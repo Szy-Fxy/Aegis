@@ -143,6 +143,17 @@ foreach ($dest in $SkillFiles.Keys) {
     }
 }
 
+# Copy Boot Skill (always available, regardless of entry choice)
+foreach ($dest in $BootSkillFiles.Keys) {
+    $src = $BootSkillFiles[$dest]
+    if (Test-Path $src) {
+        Copy-Item $src $dest -Force
+        Write-Host "  ✅ $dest"
+    } else {
+        Write-Host "  ⚠️  Boot Skill 源文件不存在: $src" -ForegroundColor Yellow
+    }
+}
+
 # Copy template files
 foreach ($dest in $TemplateFiles.Keys) {
     $src = $TemplateFiles[$dest]
@@ -230,25 +241,8 @@ Set-Content -Path "Aegis/README.md" -Value $readmeContent
 Write-Host "  ✅ Aegis/README.md"
 
 # ============================================================
-# AI 工具入口选择
+# AI 入口选择
 # ============================================================
-
-Write-Host ""
-Write-Host "📋 AI 工具入口选择" -ForegroundColor Cyan
-Write-Host "   选择 AI 工具入口（默认: AGENTS.md）:"
-Write-Host "   [1] AGENTS.md          ← 跨平台通用标准，推荐"
-Write-Host "   [2] CLAUDE.md          ← Claude Code"
-Write-Host "   [3] .cursor/rules/     ← Cursor IDE（已自动安装 aegis.mdc）"
-Write-Host "   [4] .github/copilot-   ← GitHub Copilot"
-Write-Host "   [5] .windsurfrules     ← Windsurf"
-Write-Host "   [6] 全部安装"
-Write-Host "   [0] 跳过（手动配置）"
-Write-Host ""
-
-$entryChoice = Read-Host "输入数字（多选用逗号分隔，如 1,3，默认 1）"
-if ($entryChoice -eq "") { $entryChoice = "1" }
-
-$choices = $entryChoice -split ',' | ForEach-Object { $_.Trim() }
 
 # AGENTS.md content (universal entry)
 $agentsContent = @"
@@ -280,105 +274,93 @@ $agentsContent = @"
 See `Aegis/docs/USER_GUIDE.md` for human documentation.
 "@
 
-foreach ($c in $choices) {
-    switch ($c) {
-        "1" {
-            if (-not (Test-Path "AGENTS.md")) {
-                Set-Content -Path "AGENTS.md" -Value $agentsContent
-                Write-Host "  ✅ AGENTS.md（通用 AI 入口）"
-            } else {
-                Write-Host "  ⚠️  AGENTS.md 已存在，跳过"
-            }
-        }
-        "2" {
-            if (-not (Test-Path "CLAUDE.md")) {
-                Set-Content -Path "CLAUDE.md" -Value $agentsContent
-                Write-Host "  ✅ CLAUDE.md（Claude Code 入口）"
-            } else {
-                Write-Host "  ⚠️  CLAUDE.md 已存在，跳过"
-            }
-        }
-        "3" {
-            Write-Host "  ℹ️  Cursor 规则已在 Aegis/.cursor/rules/aegis.mdc（自动加载）"
-        }
-        "4" {
-            $copilotDir = ".github"
-            if (-not (Test-Path $copilotDir)) { New-Item -ItemType Directory -Force -Path $copilotDir | Out-Null }
-            if (-not (Test-Path ".github/copilot-instructions.md")) {
-                Set-Content -Path ".github/copilot-instructions.md" -Value $agentsContent
-                Write-Host "  ✅ .github/copilot-instructions.md（Copilot 入口）"
-            } else {
-                Write-Host "  ⚠️  .github/copilot-instructions.md 已存在，跳过"
-            }
-        }
-        "5" {
-            if (-not (Test-Path ".windsurfrules")) {
-                Set-Content -Path ".windsurfrules" -Value $agentsContent
-                Write-Host "  ✅ .windsurfrules（Windsurf 入口）"
-            } else {
-                Write-Host "  ⚠️  .windsurfrules 已存在，跳过"
-            }
-        }
-        "6" {
-            if (-not (Test-Path "AGENTS.md")) {
-                Set-Content -Path "AGENTS.md" -Value $agentsContent
-                Write-Host "  ✅ AGENTS.md"
-            }
-            if (-not (Test-Path "CLAUDE.md")) {
-                Set-Content -Path "CLAUDE.md" -Value $agentsContent
-                Write-Host "  ✅ CLAUDE.md"
-            }
-            Write-Host "  ℹ️  Cursor: Aegis/.cursor/rules/aegis.mdc（自动加载）"
-            $copilotDir = ".github"
-            if (-not (Test-Path $copilotDir)) { New-Item -ItemType Directory -Force -Path $copilotDir | Out-Null }
-            if (-not (Test-Path ".github/copilot-instructions.md")) {
-                Set-Content -Path ".github/copilot-instructions.md" -Value $agentsContent
-                Write-Host "  ✅ .github/copilot-instructions.md"
-            }
-            if (-not (Test-Path ".windsurfrules")) {
-                Set-Content -Path ".windsurfrules" -Value $agentsContent
-                Write-Host "  ✅ .windsurfrules"
-            }
-        }
-        "0" {
-            Write-Host "  ℹ️  已跳过 AI 入口安装。请手动将 AGENTS.md 内容复制到你的 AI 工具的自动加载位置。"
-        }
-    }
-}
-
-# ============================================================
-# Boot Skill 选择（HanaAgent / Trae 等支持 Skill 的平台）
-# ============================================================
-
 Write-Host ""
-Write-Host "📋 Boot Skill 选择" -ForegroundColor Cyan
-Write-Host "   Aegis Boot Skill 适用于支持 Skill 自动触发的平台"
-Write-Host "   （如 HanaAgent、Trae 等）。安装后 AI 在处理开发任务时自动激活 Aegis。"
-$bootChoice = Read-Host "   安装 Boot Skill？[Y/n]"
-if ($bootChoice -eq "" -or $bootChoice -eq "Y" -or $bootChoice -eq "y") {
-    $bootSkillDir = "Aegis/skills/aegis-boot"
-    if (-not (Test-Path $bootSkillDir)) { New-Item -ItemType Directory -Force -Path $bootSkillDir | Out-Null }
-    foreach ($dest in $BootSkillFiles.Keys) {
-        $src = $BootSkillFiles[$dest]
-        if (Test-Path $src) {
-            Copy-Item $src $dest -Force
-            Write-Host "  ✅ $dest（Boot Skill）"
+Write-Host "📋 选择 AI 入口（只能选一个）" -ForegroundColor Cyan
+Write-Host "   [1] AGENTS.md          ← 通用标准，推荐"
+Write-Host "   [2] CLAUDE.md          ← Claude Code"
+Write-Host "   [3] .cursor/rules/     ← Cursor IDE"
+Write-Host "   [4] .github/copilot-   ← GitHub Copilot"
+Write-Host "   [5] .windsurfrules     ← Windsurf"
+Write-Host "   [6] Boot Skill         ← 不支持入口文件的平台（HanaAgent / Trae 等）"
+Write-Host "   [0] 跳过（手动配置）"
+Write-Host ""
+
+$entryChoice = Read-Host "输入数字（默认 1）"
+if ($entryChoice -eq "") { $entryChoice = "1" }
+
+switch ($entryChoice) {
+    "1" {
+        if (-not (Test-Path "AGENTS.md")) {
+            Set-Content -Path "AGENTS.md" -Value $agentsContent
+            Write-Host "  ✅ AGENTS.md（通用 AI 入口）"
         } else {
-            Write-Host "  ⚠️  Boot Skill 源文件不存在: $src"
+            Write-Host "  ⚠️  AGENTS.md 已存在，跳过"
         }
     }
-    Write-Host "  ℹ️  Boot Skill 安装示例：将 Aegis/skills/aegis-boot/ 复制到平台的 skills 目录"
+    "2" {
+        if (-not (Test-Path "CLAUDE.md")) {
+            Set-Content -Path "CLAUDE.md" -Value $agentsContent
+            Write-Host "  ✅ CLAUDE.md（Claude Code 入口）"
+        } else {
+            Write-Host "  ⚠️  CLAUDE.md 已存在，跳过"
+        }
+    }
+    "3" {
+        New-Item -ItemType Directory -Force -Path ".cursor/rules" | Out-Null
+        Copy-Item "Aegis/.cursor/rules/aegis.mdc" ".cursor/rules/aegis.mdc" -Force
+        Write-Host "  ✅ .cursor/rules/aegis.mdc（Cursor IDE 入口）"
+    }
+    "4" {
+        New-Item -ItemType Directory -Force -Path ".github" | Out-Null
+        if (-not (Test-Path ".github/copilot-instructions.md")) {
+            Set-Content -Path ".github/copilot-instructions.md" -Value $agentsContent
+            Write-Host "  ✅ .github/copilot-instructions.md（Copilot 入口）"
+        } else {
+            Write-Host "  ⚠️  .github/copilot-instructions.md 已存在，跳过"
+        }
+    }
+    "5" {
+        if (-not (Test-Path ".windsurfrules")) {
+            Set-Content -Path ".windsurfrules" -Value $agentsContent
+            Write-Host "  ✅ .windsurfrules（Windsurf 入口）"
+        } else {
+            Write-Host "  ⚠️  .windsurfrules 已存在，跳过"
+        }
+    }
+    "6" {
+        Write-Host "  ✅ Boot Skill 已就绪（见下方导入说明）"
+    }
+    "0" {
+        Write-Host "  ℹ️  已跳过入口安装。请手动配置。"
+    }
 }
 
-# ============================================================
-# 清理 Aegis 仓库内的 AGENTS.md（用户项目根目录已有）
-# ============================================================
+# 清理 Aegis/ 内的 AGENTS.md（入口文件已在项目根目录）
 Remove-Item "Aegis/AGENTS.md" -Force -ErrorAction SilentlyContinue
+
+# 清理未选中的入口痕迹
+if ($entryChoice -ne "3") {
+    Remove-Item "Aegis/.cursor" -Recurse -Force -ErrorAction SilentlyContinue
+}
 
 Write-Host ""
 Write-Host "🛡️  Aegis v3.0.5 安装完成！" -ForegroundColor Green
 Write-Host "   项目: $ProjectName"
-Write-Host "   技术栈: $($AllTechStacks -join ', ')（全部）"
+
+# Boot Skill 导入说明
+if ($entryChoice -eq "6") {
+    Write-Host ""
+    Write-Host "📋 Boot Skill 导入方法：" -ForegroundColor Cyan
+    Write-Host "   1. 打开你的 AI 平台技能管理页面"
+    Write-Host "   2. 点击「导入技能」"
+    Write-Host "   3. 选择文件：Aegis/skills/aegis-boot/SKILL.md"
+    Write-Host "   4. 启用技能 → AI 处理开发任务时自动激活 Aegis"
+} else {
+    Write-Host ""
+    Write-Host "💡 提示：如果你的 AI 平台不支持入口文件，" -ForegroundColor Gray
+    Write-Host "   可导入 Boot Skill：Aegis/skills/aegis-boot/SKILL.md" -ForegroundColor Gray
+}
+
 Write-Host ""
 
 # VCS 忽略提示

@@ -1,7 +1,7 @@
-# Aegis v3.0.5 — 一键安装脚本
-# 用法: irm https://raw.githubusercontent.com/{你的用户名}/aegis/main/install.ps1 | iex
+# Aegis v3.0.5 — 交互式安装脚本
+# 用法: irm https://raw.githubusercontent.com/Szy-Fxy/Aegis/main/install.ps1 | iex
 #
-# 在你项目根目录运行。脚本会下载最新版 Aegis 到当前目录。
+# 在你项目根目录运行。脚本会下载最新版 Aegis 到当前目录，并让你选择 AI 入口。
 
 param(
     [string]$Branch = "main"
@@ -13,7 +13,7 @@ $ZipUrl  = "$RepoUrl/archive/refs/heads/$Branch.zip"
 $TempZip = "$env:TEMP\aegis-$Branch.zip"
 $TempDir = "$env:TEMP\aegis-$Branch"
 
-Write-Host "🛡️  Aegis v3.0.5 — 一键安装" -ForegroundColor Cyan
+Write-Host "🛡️  Aegis v3.0.5 — 交互式安装" -ForegroundColor Cyan
 Write-Host "   仓库: $RepoUrl" -ForegroundColor Gray
 Write-Host ""
 
@@ -38,7 +38,6 @@ Write-Host "📦 解压中..." -ForegroundColor Gray
 if (Test-Path $TempDir) { Remove-Item -Recurse -Force $TempDir }
 Expand-Archive -Path $TempZip -DestinationPath "$env:TEMP" -Force
 
-# GitHub 解压后的文件夹名是 "仓库名-分支名"
 $ExtractedDir = Get-ChildItem "$env:TEMP" -Directory | 
     Where-Object { $_.Name -like "Aegis-*" -or $_.Name -like "aegis-*" } |
     Sort-Object LastWriteTime -Descending |
@@ -52,16 +51,7 @@ if (-not $ExtractedDir) {
 # 4. 移动 Aegis/ 到当前目录
 Move-Item $ExtractedDir.FullName "Aegis" -Force
 
-# 5. 复制 AGENTS.md 到项目根目录（跨平台 AI 通用入口）
-if (-not (Test-Path "AGENTS.md")) {
-    Copy-Item "Aegis/AGENTS.md" "." -Force
-    Write-Host "✅ AGENTS.md（AI 通用入口）" -ForegroundColor Green
-} else {
-    Write-Host "⚠️  AGENTS.md 已存在，跳过。" -ForegroundColor Yellow
-}
-Remove-Item "Aegis/AGENTS.md" -Force -ErrorAction SilentlyContinue
-
-# 6. 创建 Aegis_Specs/INDEX.md
+# 5. 创建 Aegis_Specs/INDEX.md
 New-Item -ItemType Directory -Force -Path "Aegis_Specs" | Out-Null
 if (-not (Test-Path "Aegis_Specs/INDEX.md")) {
     Set-Content -Path "Aegis_Specs/INDEX.md" -Value @"
@@ -73,16 +63,133 @@ if (-not (Test-Path "Aegis_Specs/INDEX.md")) {
     Write-Host "✅ Aegis_Specs/INDEX.md" -ForegroundColor Green
 }
 
-# 7. 清理 Aegis 仓库自身文件（不留在用户项目里）
+# ============================================================
+# 6. AI 入口选择
+# ============================================================
+
+$agentsContent = @"
+# AI Agent Instructions
+
+> This project uses **Aegis v3.0.5** — AI Development Governance System.
+
+## BEFORE ANY CODE CHANGE
+
+1. **Load the workflow engine**: `Aegis/skills/dev-workflow/SKILL.md`
+2. **Classify the request**: L1 (trivial fix) / L2 (feature) / L3 (major refactor)
+3. **L2 / L3**: Propose plan → get user approval → then code
+4. **After each phase**: Write DevLog to `Aegis/rules/DevLogs/`
+
+## Quick Self-Check (every response)
+
+- [ ] What phase am I in? Updated `Aegis_Specs/INDEX.md`? Wrote DevLog?
+- [ ] Any hardcoded credentials in my code?
+- [ ] Did I expose production data or real secrets to AI?
+
+## Core Rules
+
+- Design before code (L2/L3)
+- No hardcoded secrets — use `.env`
+- Verify before closing — run tests, check acceptance criteria
+- Always update `Aegis_Specs/INDEX.md`
+- Every requirement (including L1) must be recorded in INDEX.md and DevLog
+
+See `Aegis/docs/USER_GUIDE.md` for human documentation.
+"@
+
+Write-Host ""
+Write-Host "📋 选择 AI 入口（只能选一个）" -ForegroundColor Cyan
+Write-Host "   [1] AGENTS.md          ← 通用标准，推荐"
+Write-Host "   [2] CLAUDE.md          ← Claude Code"
+Write-Host "   [3] .cursor/rules/     ← Cursor IDE"
+Write-Host "   [4] .github/copilot-   ← GitHub Copilot"
+Write-Host "   [5] .windsurfrules     ← Windsurf"
+Write-Host "   [6] Boot Skill         ← 不支持入口文件的平台（HanaAgent / Trae 等）"
+Write-Host "   [0] 跳过（手动配置）"
+Write-Host ""
+
+$entryChoice = Read-Host "输入数字（默认 1）"
+if ($entryChoice -eq "") { $entryChoice = "1" }
+
+switch ($entryChoice) {
+    "1" {
+        if (-not (Test-Path "AGENTS.md")) {
+            Set-Content -Path "AGENTS.md" -Value $agentsContent
+            Write-Host "✅ AGENTS.md（通用 AI 入口）" -ForegroundColor Green
+        } else {
+            Write-Host "⚠️  AGENTS.md 已存在，跳过" -ForegroundColor Yellow
+        }
+    }
+    "2" {
+        if (-not (Test-Path "CLAUDE.md")) {
+            Set-Content -Path "CLAUDE.md" -Value $agentsContent
+            Write-Host "✅ CLAUDE.md（Claude Code 入口）" -ForegroundColor Green
+        } else {
+            Write-Host "⚠️  CLAUDE.md 已存在，跳过" -ForegroundColor Yellow
+        }
+    }
+    "3" {
+        New-Item -ItemType Directory -Force -Path ".cursor/rules" | Out-Null
+        Copy-Item "Aegis/.cursor/rules/aegis.mdc" ".cursor/rules/aegis.mdc" -Force
+        Write-Host "✅ .cursor/rules/aegis.mdc（Cursor IDE 入口）" -ForegroundColor Green
+    }
+    "4" {
+        New-Item -ItemType Directory -Force -Path ".github" | Out-Null
+        if (-not (Test-Path ".github/copilot-instructions.md")) {
+            Set-Content -Path ".github/copilot-instructions.md" -Value $agentsContent
+            Write-Host "✅ .github/copilot-instructions.md（Copilot 入口）" -ForegroundColor Green
+        } else {
+            Write-Host "⚠️  .github/copilot-instructions.md 已存在，跳过" -ForegroundColor Yellow
+        }
+    }
+    "5" {
+        if (-not (Test-Path ".windsurfrules")) {
+            Set-Content -Path ".windsurfrules" -Value $agentsContent
+            Write-Host "✅ .windsurfrules（Windsurf 入口）" -ForegroundColor Green
+        } else {
+            Write-Host "⚠️  .windsurfrules 已存在，跳过" -ForegroundColor Yellow
+        }
+    }
+    "6" {
+        Write-Host "✅ Boot Skill 已就绪（见下方导入说明）" -ForegroundColor Green
+    }
+    "0" {
+        Write-Host "ℹ️  已跳过入口安装。请手动配置。" -ForegroundColor Gray
+    }
+}
+
+# 7. 清理 Aegis/ 内的 AGENTS.md（入口文件已在项目根目录）
+Remove-Item "Aegis/AGENTS.md" -Force -ErrorAction SilentlyContinue
+
+# 8. 清理未选中的入口痕迹（Aegis/ 内部只保留通用规则，不保留特定平台入口）
+if ($entryChoice -ne "3") {
+    Remove-Item "Aegis/.cursor" -Recurse -Force -ErrorAction SilentlyContinue
+}
+
+# 9. 清理 Aegis 仓库自身文件
 Remove-Item "Aegis/Aegis_Specs" -Recurse -Force -ErrorAction SilentlyContinue
 Remove-Item "Aegis/install.ps1" -Force -ErrorAction SilentlyContinue
 Remove-Item "Aegis/install-aegis.ps1" -Force -ErrorAction SilentlyContinue
 Write-Host "🧹 已清理仓库自身文件" -ForegroundColor Gray
 
-# 8. 清理临时文件
+# 10. 清理临时文件
 Remove-Item $TempZip -Force -ErrorAction SilentlyContinue
 
 Write-Host ""
 Write-Host "🛡️  Aegis v3.0.5 安装完成！" -ForegroundColor Green
+
+# Boot Skill 导入说明
+if ($entryChoice -eq "6") {
+    Write-Host ""
+    Write-Host "📋 Boot Skill 导入方法：" -ForegroundColor Cyan
+    Write-Host "   1. 打开你的 AI 平台技能管理页面"
+    Write-Host "   2. 点击「导入技能」"
+    Write-Host "   3. 选择文件：Aegis/skills/aegis-boot/SKILL.md"
+    Write-Host "   4. 启用技能 → AI 处理开发任务时自动激活 Aegis"
+} else {
+    Write-Host ""
+    Write-Host "💡 提示：如果你的 AI 平台不支持入口文件，" -ForegroundColor Gray
+    Write-Host "   可导入 Boot Skill：Aegis/skills/aegis-boot/SKILL.md" -ForegroundColor Gray
+}
+
 Write-Host ""
-Write-Host "   下一步：打开 AI 对话，正常提需求。AI 会自动按 Aegis 流程工作。"
+Write-Host "   下一步：打开 AI 对话，正常提需求即可。"

@@ -1,4 +1,4 @@
-﻿# Aegis v3.0.4 — 一键安装脚本
+# Aegis v3.0.5 — 一键安装脚本
 # 用法: irm https://raw.githubusercontent.com/{你的用户名}/aegis/main/install.ps1 | iex
 #
 # 在你项目根目录运行。脚本会下载最新版 Aegis 到当前目录。
@@ -52,14 +52,14 @@ if (-not $ExtractedDir) {
 # 4. 移动 Aegis/ 到当前目录
 Move-Item $ExtractedDir.FullName "Aegis" -Force
 
-# 5. 复制 Aegis_Protocol.md 到项目根目录（然后删除 Aegis/ 内的副本）
+# 5. 复制 Aegis_Protocol.md 到项目根目录（然后删除 Aegis/docs/ 内的副本）
 if (-not (Test-Path "Aegis_Protocol.md")) {
-    Copy-Item "Aegis/Aegis_Protocol.md" "." -Force
-    Remove-Item "Aegis/Aegis_Protocol.md" -Force
+    Copy-Item "Aegis/docs/Aegis_Protocol.md" "." -Force
+    Remove-Item "Aegis/docs/Aegis_Protocol.md" -Force
     Write-Host "✅ Aegis_Protocol.md（入口 + 行为准则）" -ForegroundColor Green
 } else {
     Write-Host "⚠️  Aegis_Protocol.md 已存在，跳过。" -ForegroundColor Yellow
-    Remove-Item "Aegis/Aegis_Protocol.md" -Force -ErrorAction SilentlyContinue
+    Remove-Item "Aegis/docs/Aegis_Protocol.md" -Force -ErrorAction SilentlyContinue
 }
 
 # 6. 创建 Aegis_Specs/INDEX.md

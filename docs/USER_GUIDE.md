@@ -1,4 +1,4 @@
-﻿# Aegis 用户手册
+# Aegis 用户手册
 
 > 给人类看的。一步步教你如何在新项目中用上 Aegis。
 > 预计阅读：3 分钟。操作：2 分钟。
@@ -28,7 +28,7 @@ irm https://raw.githubusercontent.com/Szy-Fxy/Aegis/main/install.ps1 | iex
  ...
 ```
 
-一键安装会自动创建含完整行为准则的 `Aegis_Protocol.md` 入口文件。手动复制的话，在根目录创建 `Aegis_Protocol.md`，内容参考 `Aegis/README.md` 或直接写：
+一键安装会自动创建含完整行为准则的 `Aegis_Protocol.md` 入口文件。手动复制的话，在根目录创建 `Aegis_Protocol.md`，内容参考 `Aegis/docs/Aegis_Protocol.md` 或直接写：
 
 ```
 AI 请按 Aegis/skills/dev-workflow/SKILL.md 加载规则。
@@ -53,20 +53,23 @@ AI：好的，我判定这是 L2 需求，先出一份方案给你看...
 你的新项目/
  Aegis/
     README.md               AI 入口（AI 读这个）
-    USER_GUIDE.md           本文件
-    QUICK_START.md          30 秒速览
     install.ps1             一键安装脚本
     install-aegis.ps1       离线备用脚本
+    docs/
+       USER_GUIDE.md        本文件
+       QUICK_START.md       30 秒速览
+       Aegis_Intro.md       项目详细介绍
+       Aegis_Protocol.md    强制协议入口
     rules/
-       global.md           全局代码规范
-       TechStack/          5 个技术栈规范
-       TempData/           临时资料（AI 自动管理）
-       DevLogs/            开发日志（AI 自动写）
+       global.md            全局代码规范
+       TechStack/           9 个技术栈规范
+       TempData/            临时资料（AI 自动管理）
+       DevLogs/             开发日志（AI 自动写）
     skills/
-       dev-workflow/       工作流引擎
+       dev-workflow/        工作流引擎
     .cursor/
         rules/
-            aegis.mdc       Cursor IDE 自动规则
+            aegis.mdc        Cursor IDE 自动规则
  Aegis_Specs/
     INDEX.md                需求索引（AI 自动维护）
  你原来的代码...

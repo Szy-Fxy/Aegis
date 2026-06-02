@@ -1,6 +1,6 @@
-﻿<#
+<#
 .SYNOPSIS
-    Aegis v3.0.4 — 跨 IDE AI 编程助手开发治理系统安装脚本
+    Aegis v3.0.5 — 跨 IDE AI 编程助手开发治理系统安装脚本
 .DESCRIPTION
     在新项目根目录运行此脚本，自动创建 Aegis 全套目录结构和规则文件。
     不依赖任何特定 IDE（支持 SOLO / OpenHanako / OpenCode 等）。
@@ -58,7 +58,7 @@ $CoreFiles = @{
     "Aegis/rules/DevLogs/README.md" = "$ScriptDir/rules/DevLogs/README.md"
     "Aegis/rules/TempData/README.md" = "$ScriptDir/rules/TempData/README.md"
     "Aegis/.cursor/rules/aegis.mdc" = "$ScriptDir/.cursor/rules/aegis.mdc"
-    "Aegis/Aegis_Intro.md"           = "$ScriptDir/Aegis_Intro.md"
+    "Aegis/docs/Aegis_Intro.md"           = "$ScriptDir/docs/Aegis_Intro.md"
 }
 
 # Skill files
@@ -182,7 +182,7 @@ if (-not (Test-Path $indexPath)) {
 $readmeContent = @"
 # $ProjectName — 项目入口
 
-> 本项目使用 [Aegis v3.0.4](Aegis/Aegis_Intro.md) AI 开发治理系统。
+> 本项目使用 [Aegis v3.0.5](Aegis/docs/Aegis_Intro.md) AI 开发治理系统。
 > AI 请按 `Aegis/skills/dev-workflow/SKILL.md` 加载规则。
 
 ---
@@ -223,14 +223,14 @@ $readmeContent += @"
 Set-Content -Path "Aegis/README.md" -Value $readmeContent
 Write-Host "  ✅ Aegis/README.md"
 
-# Copy Aegis_Protocol.md to project root (then delete the copy inside Aegis/)
+# Copy Aegis_Protocol.md to project root (then delete the copy inside Aegis/docs/)
 if (-not (Test-Path "Aegis_Protocol.md")) {
-    Copy-Item "Aegis/Aegis_Protocol.md" "." -Force
-    Remove-Item "Aegis/Aegis_Protocol.md" -Force
+    Copy-Item "Aegis/docs/Aegis_Protocol.md" "." -Force
+    Remove-Item "Aegis/docs/Aegis_Protocol.md" -Force
     Write-Host "  ✅ Aegis_Protocol.md（入口 + 行为准则）"
 } else {
     Write-Host "  ⚠️  Aegis_Protocol.md 已存在，跳过"
-    Remove-Item "Aegis/Aegis_Protocol.md" -Force -ErrorAction SilentlyContinue
+    Remove-Item "Aegis/docs/Aegis_Protocol.md" -Force -ErrorAction SilentlyContinue
 }
 
 Write-Host ""

@@ -113,7 +113,7 @@ Aegis/
 
  rules/
     global.md                      全局准则（SOLID + 安全 + 行为准则）
-    TechStack/                     5 个技术栈规范
+    TechStack/                     9 个技术栈规范
     TempData/                      临时参考资料
     DevLogs/                       开发日志存档
 

@@ -8,6 +8,8 @@
 | REQ-002 | Aegis Critical 修复与安全治理 | L2 | ✅ done | 2026-06-01 | 2026-06-01 |
 | REQ-003 | Aegis v3.0.5 文件结构重构 | L2 | ✅ done | 2026-06-02 | 2026-06-02 |
 | REQ-004 | AGENTS.md + Boot Skill + L1 强制记录 + INDEX 生命周期 | L2 | ✅ done | 2026-06-02 | 2026-06-02 |
+| REQ-005 | 移除内置 .cursor + 新增 .trae 入口 + Boot Skill 兜底 | L2 | ✅ done | 2026-06-02 | 2026-06-02 |
+| REQ-006 | Hotfix: 安装脚本 Set-Content 编码修复 + TechStack 补全 | L1 | ✅ done | 2026-06-02 | 2026-06-02 |
 
 ---
 

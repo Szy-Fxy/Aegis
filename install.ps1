@@ -53,7 +53,7 @@ Move-Item $ExtractedDir.FullName "Aegis" -Force
 # 5. 创建 Aegis_Specs/INDEX.md（含状态说明）
 New-Item -ItemType Directory -Force -Path "Aegis_Specs" | Out-Null
 if (-not (Test-Path "Aegis_Specs/INDEX.md")) {
-    Set-Content -Path "Aegis_Specs/INDEX.md" -Value @"
+    Set-Content -Encoding UTF8 -Path "Aegis_Specs/INDEX.md" -Value @"
 # 需求索引
 
 | ID | 需求名 | 级别 | 状态 | 开始日期 | 最后活动 |
@@ -159,7 +159,7 @@ if ($entryChoice -eq "") { $entryChoice = "1" }
 switch ($entryChoice) {
     "1" {
         if (-not (Test-Path "AGENTS.md")) {
-            Set-Content -Path "AGENTS.md" -Value $agentsContent
+            Set-Content -Encoding UTF8 -Path "AGENTS.md" -Value $agentsContent
             Write-Host "✅ AGENTS.md（通用 AI 入口）" -ForegroundColor Green
         } else {
             Write-Host "⚠️  AGENTS.md 已存在，跳过" -ForegroundColor Yellow
@@ -167,7 +167,7 @@ switch ($entryChoice) {
     }
     "2" {
         if (-not (Test-Path "CLAUDE.md")) {
-            Set-Content -Path "CLAUDE.md" -Value $agentsContent
+            Set-Content -Encoding UTF8 -Path "CLAUDE.md" -Value $agentsContent
             Write-Host "✅ CLAUDE.md（Claude Code 入口）" -ForegroundColor Green
         } else {
             Write-Host "⚠️  CLAUDE.md 已存在，跳过" -ForegroundColor Yellow
@@ -175,13 +175,13 @@ switch ($entryChoice) {
     }
     "3" {
         New-Item -ItemType Directory -Force -Path ".cursor/rules" | Out-Null
-        Set-Content -Path ".cursor/rules/aegis.mdc" -Value $cursorContent
+        Set-Content -Encoding UTF8 -Path ".cursor/rules/aegis.mdc" -Value $cursorContent
         Write-Host "✅ .cursor/rules/aegis.mdc（Cursor IDE 入口）" -ForegroundColor Green
     }
     "4" {
         New-Item -ItemType Directory -Force -Path ".github" | Out-Null
         if (-not (Test-Path ".github/copilot-instructions.md")) {
-            Set-Content -Path ".github/copilot-instructions.md" -Value $agentsContent
+            Set-Content -Encoding UTF8 -Path ".github/copilot-instructions.md" -Value $agentsContent
             Write-Host "✅ .github/copilot-instructions.md（Copilot 入口）" -ForegroundColor Green
         } else {
             Write-Host "⚠️  .github/copilot-instructions.md 已存在，跳过" -ForegroundColor Yellow
@@ -190,7 +190,7 @@ switch ($entryChoice) {
     "5" {
         New-Item -ItemType Directory -Force -Path ".trae/rules" | Out-Null
         if (-not (Test-Path ".trae/rules/project_rules.md")) {
-            Set-Content -Path ".trae/rules/project_rules.md" -Value $agentsContent
+            Set-Content -Encoding UTF8 -Path ".trae/rules/project_rules.md" -Value $agentsContent
             Write-Host "✅ .trae/rules/project_rules.md（Trae IDE 入口）" -ForegroundColor Green
         } else {
             Write-Host "⚠️  .trae/rules/project_rules.md 已存在，跳过" -ForegroundColor Yellow
@@ -198,7 +198,7 @@ switch ($entryChoice) {
     }
     "6" {
         if (-not (Test-Path ".windsurfrules")) {
-            Set-Content -Path ".windsurfrules" -Value $agentsContent
+            Set-Content -Encoding UTF8 -Path ".windsurfrules" -Value $agentsContent
             Write-Host "✅ .windsurfrules（Windsurf 入口）" -ForegroundColor Green
         } else {
             Write-Host "⚠️  .windsurfrules 已存在，跳过" -ForegroundColor Yellow

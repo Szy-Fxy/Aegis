@@ -44,7 +44,6 @@ Write-Host ""
 
 # Core directory structure
 $Dirs = @(
-    "Aegis/.cursor/rules",
     "Aegis/rules/TechStack",
     "Aegis/rules/TempData",
     "Aegis/rules/DevLogs",
@@ -57,7 +56,6 @@ $CoreFiles = @{
     "Aegis/rules/global.md"    = "$ScriptDir/rules/global.md"
     "Aegis/rules/DevLogs/README.md" = "$ScriptDir/rules/DevLogs/README.md"
     "Aegis/rules/TempData/README.md" = "$ScriptDir/rules/TempData/README.md"
-    "Aegis/.cursor/rules/aegis.mdc" = "$ScriptDir/.cursor/rules/aegis.mdc"
     "Aegis/docs/Aegis_Intro.md"           = "$ScriptDir/docs/Aegis_Intro.md"
     "Aegis/AGENTS.md" = "$ScriptDir/AGENTS.md"
 }
@@ -101,6 +99,7 @@ if ($DryRun) {
     foreach ($dir in $Dirs) { Write-Host "  📁 $dir" }
     foreach ($key in $CoreFiles.Keys) { Write-Host "  📄 $key" }
     foreach ($key in $SkillFiles.Keys) { Write-Host "  📄 $key" }
+    foreach ($key in $BootSkillFiles.Keys) { Write-Host "  📄 $key" }
     foreach ($key in $TemplateFiles.Keys) { Write-Host "  📄 $key" }
 
     if ($TechStack) {
@@ -186,6 +185,18 @@ $indexContent = @"
 
 | ID | 需求名 | 级别 | 状态 | 开始日期 | 最后活动 |
 |----|--------|------|------|----------|----------|
+
+## 状态说明
+
+| 状态 | 含义 |
+|------|------|
+| 🔨 implementing | 正在开发中 |
+| ⏸️ paused | 已暂停（插队或阻塞） |
+| ✅ done | 已完成并验收 |
+| ❌ cancelled | 已取消 |
+| 🔄 review | 等待审核 |
+
+> AI 会在需求状态变更时自动更新此表。
 "@
 $indexPath = "Aegis_Specs/INDEX.md"
 if (-not (Test-Path $indexPath)) {
@@ -274,14 +285,49 @@ $agentsContent = @"
 See `Aegis/docs/USER_GUIDE.md` for human documentation.
 "@
 
+$cursorContent = @"
+---
+description: Aegis v3.0.5 — AI 开发治理系统。行为准则 + 工程规范 + 工作流规则。始终生效。
+alwaysApply: true
+---
+
+# Aegis v3.0.5 — AI 开发治理系统
+
+> 规范驱动 · 设计先行 · 验证闭环 · 持续进化
+
+## BEFORE ANY CODE CHANGE
+
+1. **Load the workflow engine**: `Aegis/skills/dev-workflow/SKILL.md`
+2. **Classify the request**: L1 (trivial fix) / L2 (feature) / L3 (major refactor)
+3. **L2 / L3**: Propose plan → get user approval → then code
+4. **After each phase**: Write DevLog to `Aegis/rules/DevLogs/`
+
+## Quick Self-Check
+
+- [ ] What phase am I in? Updated `Aegis_Specs/INDEX.md`? Wrote DevLog?
+- [ ] Any hardcoded credentials in my code?
+- [ ] Did I expose production data or real secrets to AI?
+
+## Core Rules
+
+- Design before code (L2/L3)
+- No hardcoded secrets — use `.env`
+- Verify before closing
+- Always update `Aegis_Specs/INDEX.md`
+- Every requirement (including L1) must be recorded in INDEX.md and DevLog
+
+See `Aegis/docs/USER_GUIDE.md` for documentation.
+"@
+
 Write-Host ""
 Write-Host "📋 选择 AI 入口（只能选一个）" -ForegroundColor Cyan
 Write-Host "   [1] AGENTS.md          ← 通用标准，推荐"
 Write-Host "   [2] CLAUDE.md          ← Claude Code"
 Write-Host "   [3] .cursor/rules/     ← Cursor IDE"
 Write-Host "   [4] .github/copilot-   ← GitHub Copilot"
-Write-Host "   [5] .windsurfrules     ← Windsurf"
-Write-Host "   [6] Boot Skill         ← 不支持入口文件的平台（HanaAgent / Trae 等）"
+Write-Host "   [5] .trae/rules/       ← Trae IDE"
+Write-Host "   [6] .windsurfrules     ← Windsurf"
+Write-Host "   [7] Boot Skill         ← 兜底方案，所有平台通用"
 Write-Host "   [0] 跳过（手动配置）"
 Write-Host ""
 
@@ -307,7 +353,7 @@ switch ($entryChoice) {
     }
     "3" {
         New-Item -ItemType Directory -Force -Path ".cursor/rules" | Out-Null
-        Copy-Item "Aegis/.cursor/rules/aegis.mdc" ".cursor/rules/aegis.mdc" -Force
+        Set-Content -Path ".cursor/rules/aegis.mdc" -Value $cursorContent
         Write-Host "  ✅ .cursor/rules/aegis.mdc（Cursor IDE 入口）"
     }
     "4" {
@@ -320,6 +366,15 @@ switch ($entryChoice) {
         }
     }
     "5" {
+        New-Item -ItemType Directory -Force -Path ".trae/rules" | Out-Null
+        if (-not (Test-Path ".trae/rules/project_rules.md")) {
+            Set-Content -Path ".trae/rules/project_rules.md" -Value $agentsContent
+            Write-Host "  ✅ .trae/rules/project_rules.md（Trae IDE 入口）"
+        } else {
+            Write-Host "  ⚠️  .trae/rules/project_rules.md 已存在，跳过"
+        }
+    }
+    "6" {
         if (-not (Test-Path ".windsurfrules")) {
             Set-Content -Path ".windsurfrules" -Value $agentsContent
             Write-Host "  ✅ .windsurfrules（Windsurf 入口）"
@@ -327,7 +382,7 @@ switch ($entryChoice) {
             Write-Host "  ⚠️  .windsurfrules 已存在，跳过"
         }
     }
-    "6" {
+    "7" {
         Write-Host "  ✅ Boot Skill 已就绪（见下方导入说明）"
     }
     "0" {
@@ -338,17 +393,12 @@ switch ($entryChoice) {
 # 清理 Aegis/ 内的 AGENTS.md（入口文件已在项目根目录）
 Remove-Item "Aegis/AGENTS.md" -Force -ErrorAction SilentlyContinue
 
-# 清理未选中的入口痕迹
-if ($entryChoice -ne "3") {
-    Remove-Item "Aegis/.cursor" -Recurse -Force -ErrorAction SilentlyContinue
-}
-
 Write-Host ""
 Write-Host "🛡️  Aegis v3.0.5 安装完成！" -ForegroundColor Green
 Write-Host "   项目: $ProjectName"
 
 # Boot Skill 导入说明
-if ($entryChoice -eq "6") {
+if ($entryChoice -eq "7") {
     Write-Host ""
     Write-Host "📋 Boot Skill 导入方法：" -ForegroundColor Cyan
     Write-Host "   1. 打开你的 AI 平台技能管理页面"

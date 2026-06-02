@@ -188,7 +188,7 @@ if (-not (Test-Path $indexPath)) {
 $readmeContent = @"
 # $ProjectName — 项目入口
 
-> 本项目使用 [Aegis v3.0.5](Aegis/docs/Aegis_Intro.md) AI 开发治理系统。
+> 本项目使用 [Aegis v3.0.5](docs/Aegis_Intro.md) AI 开发治理系统。
 > AI 请按 `Aegis/skills/dev-workflow/SKILL.md` 加载规则。
 
 ---
@@ -197,13 +197,13 @@ $readmeContent = @"
 
 | 文件 | 用途 | 触发条件 |
 |------|------|----------|
-| [Aegis/rules/global.md](Aegis/rules/global.md) | 全局通用准则 | 始终加载 |
+| [Aegis/rules/global.md](rules/global.md) | 全局通用准则 | 始终加载 |
 "@
 
 if ($TechStack) {
     $stacks = $TechStack -split ',' | ForEach-Object { $_.Trim().ToLower() }
     foreach ($stack in $stacks) {
-        $readmeContent += "| [Aegis/rules/TechStack/$stack.md](Aegis/rules/TechStack/$stack.md) | $stack | $stack 相关需求 |`n"
+        $readmeContent += "| [Aegis/rules/TechStack/$stack.md](rules/TechStack/$stack.md) | $stack | $stack 相关需求 |`n"
     }
 }
 
@@ -223,7 +223,7 @@ $readmeContent += @"
 ## 工作流
 
 所有需求遵循 Aegis L1 / L2 / L3 分级流程。
-详见 [Aegis/skills/dev-workflow/SKILL.md](Aegis/skills/dev-workflow/SKILL.md)。
+详见 [Aegis/skills/dev-workflow/SKILL.md](skills/dev-workflow/SKILL.md)。
 "@
 
 Set-Content -Path "Aegis/README.md" -Value $readmeContent

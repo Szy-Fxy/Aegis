@@ -73,10 +73,11 @@ if (-not (Test-Path "Aegis_Specs/INDEX.md")) {
     Write-Host "✅ Aegis_Specs/INDEX.md" -ForegroundColor Green
 }
 
-# 7. 清理安装脚本（不留在用户项目里）
+# 7. 清理 Aegis 仓库自身文件（不留在用户项目里）
+Remove-Item "Aegis/Aegis_Specs" -Recurse -Force -ErrorAction SilentlyContinue
 Remove-Item "Aegis/install.ps1" -Force -ErrorAction SilentlyContinue
 Remove-Item "Aegis/install-aegis.ps1" -Force -ErrorAction SilentlyContinue
-Write-Host "🧹 已清理安装脚本" -ForegroundColor Gray
+Write-Host "🧹 已清理仓库自身文件" -ForegroundColor Gray
 
 # 8. 清理临时文件
 Remove-Item $TempZip -Force -ErrorAction SilentlyContinue

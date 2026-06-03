@@ -560,6 +560,7 @@ Engineering Partner
 | 2026-06-02 | v3.0.5 | Hotfix：Set-Content 全体加 -Encoding UTF8（解决中文乱码）；install-aegis.ps1 TechStack 补全至 9 个 |
 | 2026-06-02 | v3.0.5 | 自举规范化：建立 CHANGELOG.md + BOOTSTRAP.md；INDEX.md 恢复纯模板（清 REQ 记录）；子代理增加「大白话」讲解；模板补全并发规则章节 |
 | 2026-06-02 | v3.0.6 | L2 强化：每阶段增加 BOUNDARY CHECK + 失败恢复 + 阶段边界检查；aegis-boot 全面升级（MANDATORY SEQUENCE + 可执行边界检查）；全局版本号 3.0.5 → 3.0.6 |
+| 2026-06-03 | v3.0.6 | 社区生态：新增 CONTRIBUTING.md + GitHub Issue 模板；install.ps1 增加 --Verify 参数；新增 update-aegis.ps1 升级脚本 |
 | 2026-05-31 | v3.0.2 | 融合 Karpathy Skills：完整 Aegis_Protocol.md 生成、.cursor/rules/aegis.mdc、Anti-Patterns 速查表、Key Insight 循环验证、README 升级、跨 IDE 支持矩阵、How to Know It's Working |
 
 ---

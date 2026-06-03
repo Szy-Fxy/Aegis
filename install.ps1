@@ -1,10 +1,12 @@
 # Aegis v3.0.6 — 交互式安装脚本
 # 用法: irm https://raw.githubusercontent.com/Szy-Fxy/Aegis/main/install.ps1 | iex
+#       ./install.ps1 -Verify   （仅验证安装完整性）
 #
 # 在你项目根目录运行。下载最新版 Aegis，让你选择 AI 入口。
 
 param(
-    [string]$Branch = "main"
+    [string]$Branch = "main",
+    [switch]$Verify
 )
 
 $ErrorActionPreference = "Stop"
@@ -12,6 +14,119 @@ $RepoUrl = "https://github.com/Szy-Fxy/Aegis"
 $ZipUrl  = "$RepoUrl/archive/refs/heads/$Branch.zip"
 $TempZip = "$env:TEMP\aegis-$Branch.zip"
 $TempDir = "$env:TEMP\aegis-$Branch"
+
+# ============================================================
+# --Verify 模式：仅验证安装完整性，不执行安装
+# ============================================================
+if ($Verify) {
+    Write-Host "🔍 Aegis 安装验证" -ForegroundColor Cyan
+    Write-Host ""
+
+    $Passed = 0
+    $Failed = 0
+
+    $ExpectedFiles = @(
+        "Aegis/README.md",
+        "Aegis/docs/Aegis_Intro.md",
+        "Aegis/docs/USER_GUIDE.md",
+        "Aegis/docs/QUICK_START.md",
+        "Aegis/rules/global.md",
+        "Aegis/rules/DevLogs/README.md",
+        "Aegis/rules/TempData/README.md",
+        "Aegis/skills/aegis-boot/SKILL.md",
+        "Aegis/skills/dev-workflow/SKILL.md",
+        "Aegis/skills/dev-workflow/conventions/naming-and-formats.md",
+        "Aegis/skills/dev-workflow/sub-agents/code-reviewer.md",
+        "Aegis/skills/dev-workflow/sub-agents/devils-advocate.md",
+        "Aegis/skills/dev-workflow/sub-agents/security-auditor.md",
+        "Aegis/skills/dev-workflow/sub-agents/ux-reviewer.md",
+        "Aegis/skills/dev-workflow/templates/brainstorm.md",
+        "Aegis/skills/dev-workflow/templates/proposal.md",
+        "Aegis/skills/dev-workflow/templates/design.md",
+        "Aegis/skills/dev-workflow/templates/spec-L2.md",
+        "Aegis/skills/dev-workflow/templates/spec-L3.md",
+        "Aegis/skills/dev-workflow/templates/meta-spec.md",
+        "Aegis/skills/dev-workflow/templates/tasks.md",
+        "Aegis/skills/dev-workflow/templates/review.md",
+        "Aegis/skills/dev-workflow/templates/verify.md",
+        "Aegis/rules/TechStack/python.md",
+        "Aegis/rules/TechStack/unity.md",
+        "Aegis/rules/TechStack/typescript.md",
+        "Aegis/rules/TechStack/unreal.md",
+        "Aegis/rules/TechStack/cpp.md",
+        "Aegis/rules/TechStack/go.md",
+        "Aegis/rules/TechStack/rust.md",
+        "Aegis/rules/TechStack/java.md",
+        "Aegis/rules/TechStack/docker.md",
+        "Aegis_Specs/INDEX.md"
+    )
+
+    # 检查文件存在性
+    Write-Host "📁 文件完整性" -ForegroundColor Cyan
+    foreach ($file in $ExpectedFiles) {
+        if (Test-Path $file) {
+            Write-Host "  ✅ $file" -ForegroundColor Green
+            $Passed++
+        } else {
+            Write-Host "  ❌ $file 缺失" -ForegroundColor Red
+            $Failed++
+        }
+    }
+
+    # 检查入口文件是否存在
+    Write-Host ""
+    Write-Host "🚪 AI 入口" -ForegroundColor Cyan
+    $EntryFiles = @("AGENTS.md", "CLAUDE.md", ".cursor/rules/aegis.mdc", ".github/copilot-instructions.md", ".trae/rules/project_rules.md", ".windsurfrules")
+    $foundEntry = $false
+    foreach ($entry in $EntryFiles) {
+        if (Test-Path $entry) {
+            Write-Host "  ✅ $entry" -ForegroundColor Green
+            $foundEntry = $true
+        } else {
+            Write-Host "  ⚪ $entry（未安装）" -ForegroundColor Gray
+        }
+    }
+    if (-not $foundEntry) {
+        Write-Host "  ⚠️  未检测到任何 AI 入口文件。请运行 install.ps1 安装。" -ForegroundColor Yellow
+    }
+
+    # 检查不应存在的文件（仓库自身文件应已清理）
+    Write-Host ""
+    Write-Host "🧹 清理检查" -ForegroundColor Cyan
+    $ShouldNotExist = @("Aegis/AGENTS.md", "Aegis/install.ps1", "Aegis/CHANGELOG.md", "Aegis/BOOTSTRAP.md")
+    foreach ($file in $ShouldNotExist) {
+        if (Test-Path $file) {
+            Write-Host "  ⚠️  $file 不应存在（未清理）" -ForegroundColor Yellow
+        } else {
+            Write-Host "  ✅ $file 已清理" -ForegroundColor Green
+            $Passed++
+        }
+    }
+
+    # 检查 Aegis_Specs/INDEX.md 内容完整性
+    Write-Host ""
+    Write-Host "📋 INDEX.md 内容检查" -ForegroundColor Cyan
+    if (Test-Path "Aegis_Specs/INDEX.md") {
+        $indexContent = Get-Content "Aegis_Specs/INDEX.md" -Raw
+        if ($indexContent -match "状态说明" -and $indexContent -match "并发规则") {
+            Write-Host "  ✅ INDEX.md 内容完整（含状态说明 + 并发规则）" -ForegroundColor Green
+            $Passed++
+        } else {
+            Write-Host "  ⚠️  INDEX.md 缺少必要章节" -ForegroundColor Yellow
+            $Failed++
+        }
+    }
+
+    Write-Host ""
+    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
+    Write-Host "✅ 通过: $Passed  |  ❌ 失败: $Failed" -ForegroundColor $(if ($Failed -eq 0) { "Green" } else { "Red" })
+    if ($Failed -eq 0) {
+        Write-Host "🛡️  Aegis 安装完整，可以正常使用。" -ForegroundColor Green
+    } else {
+        Write-Host "⚠️  发现 $Failed 个问题，建议重新运行 install.ps1 安装。" -ForegroundColor Yellow
+    }
+    exit
+}
 
 Write-Host "🛡️  Aegis v3.0.6 — 交互式安装" -ForegroundColor Cyan
 Write-Host "   仓库: $RepoUrl" -ForegroundColor Gray
@@ -235,6 +350,9 @@ Remove-Item "Aegis/install.ps1" -Force -ErrorAction SilentlyContinue
 Remove-Item "Aegis/install-aegis.ps1" -Force -ErrorAction SilentlyContinue
 Remove-Item "Aegis/CHANGELOG.md" -Force -ErrorAction SilentlyContinue
 Remove-Item "Aegis/BOOTSTRAP.md" -Force -ErrorAction SilentlyContinue
+Remove-Item "Aegis/CONTRIBUTING.md" -Force -ErrorAction SilentlyContinue
+Remove-Item "Aegis/update-aegis.ps1" -Force -ErrorAction SilentlyContinue
+Remove-Item "Aegis/.github" -Recurse -Force -ErrorAction SilentlyContinue
 Write-Host "🧹 已清理仓库自身文件" -ForegroundColor Gray
 
 # 9. 清理临时文件

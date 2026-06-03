@@ -308,4 +308,5 @@ L3 需求全部完成后，AI 必须执行以下收尾步骤：
 | 2026-05-31 | v3.0 | 路径重构、SKILL.md 拆分、进程恢复、迭代退回、收尾仪式、并发 INDEX |
 | 2026-06-01 | v3.0.4 | 收尾加步骤 0 文档完整性检查；各阶段新增反借口表；L3-6 子代理审查落地 |
 | 2026-06-02 | v3.0.5 | 文件结构重构：根目录 .md 移入 docs/；移除内置 .cursor；新增 .trae/rules/ 入口；安装选项扩至 7 个；Boot Skill 改为兜底方案；INDEX.md 模板加状态说明；版本号全局统一 |
-| 2026-06-02 | v3.0.5 | Hotfix：install.ps1 / install-aegis.ps1 全体 Set-Content 加 -Encoding UTF8（解决中文乱码）；install-aegis.ps1 TechStack 补全至 9 个；README 数字修正 |
+| 2026-06-02 | v3.0.5 | Hotfix：Set-Content 全体加 -Encoding UTF8（解决中文乱码）；install-aegis.ps1 TechStack 补全至 9 个 |
+| 2026-06-02 | v3.0.5 | 自举规范化：建立 CHANGELOG.md + BOOTSTRAP.md；INDEX.md 恢复纯模板；子代理增加「大白话」讲解；模板补全并发规则 |

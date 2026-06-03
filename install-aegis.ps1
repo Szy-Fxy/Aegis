@@ -187,18 +187,32 @@ New-Item -ItemType Directory -Force -Path "Aegis_Specs" | Out-Null
 $indexContent = @"
 # 需求索引
 
+> 项目需求追踪。新需求登记时立即更新此文件。
+
 | ID | 需求名 | 级别 | 状态 | 开始日期 | 最后活动 |
 |----|--------|------|------|----------|----------|
+
+---
 
 ## 状态说明
 
 | 状态 | 含义 |
 |------|------|
-| 🔨 implementing | 正在开发中 |
-| ⏸️ paused | 已暂停（插队或阻塞） |
-| ✅ done | 已完成并验收 |
-| ❌ cancelled | 已取消 |
-| 🔄 review | 等待审核 |
+| 📋 brainstorm | 方案讨论中 |
+| 📋 proposal | 方案已定，待审核 |
+| 📐 design | 技术设计中 |
+| 📝 spec | 需求规格编写中 |
+| 📋 review | 审核中 |
+| 🔨 implementing | 代码实现中 |
+| ✅ done | 已完成 |
+| ⏸️ paused | 暂停 |
+| ❌ cancelled | 取消 |
+
+## 并发规则
+
+- 同时只有一个需求处于 `🔨 implementing`
+- L1 需求可插队执行，不阻塞当前 L2/L3
+- L3 过程中收到 L2 需求：完成后从 DevLog 恢复 L3 进度
 
 > AI 会在需求状态变更时自动更新此表。
 "@

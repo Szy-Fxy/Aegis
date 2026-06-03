@@ -1,6 +1,6 @@
 # AI Agent Instructions
 
-> This project uses **Aegis v3.0.5** — AI Development Governance System.
+> This project uses **Aegis v3.0.6** — AI Development Governance System.
 
 ## BEFORE ANY CODE CHANGE
 

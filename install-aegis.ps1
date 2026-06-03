@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Aegis v3.0.5 — 跨 IDE AI 编程助手开发治理系统安装脚本
+    Aegis v3.0.6 — 跨 IDE AI 编程助手开发治理系统安装脚本
 .DESCRIPTION
     在新项目根目录运行此脚本，自动创建 Aegis 全套目录结构和规则文件。
     不依赖任何特定 IDE（支持 SOLO / OpenHanako / OpenCode 等）。
@@ -37,7 +37,7 @@ if ($TechStack -eq "") {
     $TechStack = $AllTechStacks -join ","
 }
 
-Write-Host "🛡️  Aegis v3.0.5 — 安装中..." -ForegroundColor Cyan
+Write-Host "🛡️  Aegis v3.0.6 — 安装中..." -ForegroundColor Cyan
 Write-Host "   项目名: $ProjectName" -ForegroundColor Gray
 Write-Host "   技术栈: $($AllTechStacks -join ', ')（全部）" -ForegroundColor Gray
 Write-Host ""
@@ -228,7 +228,7 @@ if (-not (Test-Path $indexPath)) {
 $readmeContent = @"
 # $ProjectName — 项目入口
 
-> 本项目使用 [Aegis v3.0.5](docs/Aegis_Intro.md) AI 开发治理系统。
+> 本项目使用 [Aegis v3.0.6](docs/Aegis_Intro.md) AI 开发治理系统。
 > AI 请按 `Aegis/skills/dev-workflow/SKILL.md` 加载规则。
 
 ---
@@ -277,7 +277,7 @@ Write-Host "  ✅ Aegis/README.md"
 $agentsContent = @"
 # AI Agent Instructions
 
-> This project uses **Aegis v3.0.5** — AI Development Governance System.
+> This project uses **Aegis v3.0.6** — AI Development Governance System.
 
 ## BEFORE ANY CODE CHANGE
 
@@ -305,11 +305,11 @@ See `Aegis/docs/USER_GUIDE.md` for human documentation.
 
 $cursorContent = @"
 ---
-description: Aegis v3.0.5 — AI 开发治理系统。行为准则 + 工程规范 + 工作流规则。始终生效。
+description: Aegis v3.0.6 — AI 开发治理系统。行为准则 + 工程规范 + 工作流规则。始终生效。
 alwaysApply: true
 ---
 
-# Aegis v3.0.5 — AI 开发治理系统
+# Aegis v3.0.6 — AI 开发治理系统
 
 > 规范驱动 · 设计先行 · 验证闭环 · 持续进化
 
@@ -412,7 +412,7 @@ switch ($entryChoice) {
 Remove-Item "Aegis/AGENTS.md" -Force -ErrorAction SilentlyContinue
 
 Write-Host ""
-Write-Host "🛡️  Aegis v3.0.5 安装完成！" -ForegroundColor Green
+Write-Host "🛡️  Aegis v3.0.6 安装完成！" -ForegroundColor Green
 Write-Host "   项目: $ProjectName"
 
 # Boot Skill 导入说明

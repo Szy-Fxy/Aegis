@@ -21,6 +21,7 @@
 | 2026-06-02 | v3.0.5 | 移除内置 .cursor（入口由脚本按需生成）；新增 .trae/rules/ 入口（Trae IDE）；安装选项增至 7 个；Boot Skill 改为兜底方案（始终安装）；INDEX.md 模板增加状态说明 |
 | 2026-06-02 | v3.0.5 | Hotfix：Set-Content 全体加 -Encoding UTF8（解决中文乱码）；install-aegis.ps1 TechStack 补全至 9 个 |
 | 2026-06-02 | v3.0.5 | 自举规范化：建立 CHANGELOG.md + BOOTSTRAP.md；INDEX.md 恢复纯模板（清 REQ 记录）；子代理增加「大白话」讲解；模板补全并发规则章节 |
+| 2026-06-02 | v3.0.6 | L2 强化：每阶段增加 BOUNDARY CHECK + 失败恢复 + 阶段边界检查；aegis-boot 全面升级（MANDATORY SEQUENCE + 可执行边界检查）；SKILL.md 版本号 3.0 → 3.0.6 |
 
 ---
 
@@ -30,3 +31,4 @@
 |-----|------|
 | [v3.0.4](https://github.com/Szy-Fxy/Aegis/releases/tag/v3.0.4) | 验证流程强化 + 安全治理落地 |
 | [v3.0.5](https://github.com/Szy-Fxy/Aegis/releases/tag/v3.0.5) | 文件结构重构 + 多入口安装 + 自举规范化 |
+| [v3.0.6](https://github.com/Szy-Fxy/Aegis/releases/tag/v3.0.6) | L2 流程强化 + aegis-boot 升级 |

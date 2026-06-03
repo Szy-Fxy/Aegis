@@ -41,7 +41,9 @@ Use the classification table in the workflow engine. **Tell the user your classi
 1. Write DevLog → Aegis/rules/DevLogs/
 2. Update INDEX → Aegis_Specs/INDEX.md
 3. Make the code change
-4. Show git diff → wait for user confirmation
+4. Show change summary (file paths + lines added/removed + what changed)
+   → wait for user confirmation
+   → **DO NOT touch git/svn unless user explicitly asks**
 ```
 
 **BOUNDARY CHECK**: `Aegis_Specs/INDEX.md` updated ✅ + DevLog written ✅
@@ -69,12 +71,14 @@ Step 3: WAIT for explicit user approval (e.g., "OK", "go ahead", "approved")
 ```
 Step 1: Write code according to design.md
 Step 2: Run typecheck / lint / build to verify
-Step 3: Show git diff → wait for user confirmation
+Step 3: Show change summary (file paths + lines added/removed + what changed)
+Step 4: Wait for user confirmation
+        → **DO NOT touch git/svn unless user explicitly asks**
 ```
 
 **BOUNDARY CHECK** (use `read` tool to verify):
 - [ ] Code compiles / passes lint?
-- [ ] Git diff shown to user?
+- [ ] Change summary shown to user?
 
 **If either fails → fix before proceeding to L2-3.**
 

@@ -384,3 +384,5 @@ L3 需求全部完成后，AI 必须执行以下收尾步骤：
 | 2026-06-02 | v3.0.5 | Hotfix：Set-Content 全体加 -Encoding UTF8（解决中文乱码）；install-aegis.ps1 TechStack 补全至 9 个 |
 | 2026-06-02 | v3.0.5 | 自举规范化：建立 CHANGELOG.md + BOOTSTRAP.md；INDEX.md 恢复纯模板；子代理增加「大白话」讲解；模板补全并发规则 |
 | 2026-06-02 | v3.0.6 | L2 强化：每阶段增加 BOUNDARY CHECK + 失败恢复 + 阶段边界检查；aegis-boot 全面升级（MANDATORY SEQUENCE + 可执行边界检查）；全局版本号 3.0.5 → 3.0.6 |
+| 2026-06-03 | v3.0.6 | 规则改进：L1/L2 diff 展示改为改动摘要 + 不得擅自执行 git/svn；反借口表同步更新 |
+| 2026-06-03 | v3.0.7 | 版本号规范化：采用 L1→patch / L2→minor / L3→major 规则；全局版本号 3.0.6 → 3.0.7 |

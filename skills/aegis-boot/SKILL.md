@@ -129,6 +129,21 @@ Only then proceed.
 
 ---
 
+## 版本号规则 (Version Numbering)
+
+每次版本升级必须遵循以下规则，版本号格式为 `MAJOR.MINOR.PATCH`：
+
+| 改动等级 | 版本升级规则 | 示例（从 v3.0.6 开始） |
+|---------|------------|---------------------|
+| **L1** — 小幅修改/修复 | PATCH +1 | v3.0.6 → **v3.0.7** |
+| **L2** — 功能/模块/优化 | MINOR +1, PATCH 归零 | v3.0.6 → **v3.1.0** |
+| **L3** — 架构重构/重大变更 | MAJOR +1, MINOR/PATCH 归零 | v3.0.6 → **v4.0.0** |
+
+**规则**：
+- 每次改动完成后，根据本次改动的最高等级执行版本升级
+- 版本号更新在 CHANGELOG.md 中记录
+- 自举模块（本文件）中的版本号必须与全局版本号保持一致
+
 ## Quick Rules
 
 - No hardcoded secrets or credentials — use `.env`

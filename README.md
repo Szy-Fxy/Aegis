@@ -173,4 +173,4 @@ Aegis/
 
 ## 版本
 
-v3.0.7  完整介绍见 [Aegis_Intro.md](docs/Aegis_Intro.md)
+v3.1.0  完整介绍见 [Aegis_Intro.md](docs/Aegis_Intro.md)

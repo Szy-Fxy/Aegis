@@ -1,4 +1,4 @@
-# Aegis v3.0.7 — 交互式安装脚本
+# Aegis v3.1.0 — 交互式安装脚本
 # 用法: irm https://raw.githubusercontent.com/Szy-Fxy/Aegis/main/install.ps1 | iex
 #       ./install.ps1 -Verify   （仅验证安装完整性）
 #
@@ -128,7 +128,7 @@ if ($Verify) {
     exit
 }
 
-Write-Host "🛡️  Aegis v3.0.7 — 交互式安装" -ForegroundColor Cyan
+Write-Host "🛡️  Aegis v3.1.0 — 交互式安装" -ForegroundColor Cyan
 Write-Host "   仓库: $RepoUrl" -ForegroundColor Gray
 Write-Host ""
 
@@ -210,7 +210,7 @@ if (-not (Test-Path "Aegis_Specs/INDEX.md")) {
 $agentsContent = @"
 # AI Agent Instructions
 
-> This project uses **Aegis v3.0.7** — AI Development Governance System.
+> This project uses **Aegis v3.1.0** — AI Development Governance System.
 
 ## BEFORE ANY CODE CHANGE
 
@@ -238,11 +238,11 @@ See `Aegis/docs/USER_GUIDE.md` for human documentation.
 
 $cursorContent = @"
 ---
-description: Aegis v3.0.7 — AI 开发治理系统。行为准则 + 工程规范 + 工作流规则。始终生效。
+description: Aegis v3.1.0 — AI 开发治理系统。行为准则 + 工程规范 + 工作流规则。始终生效。
 alwaysApply: true
 ---
 
-# Aegis v3.0.7 — AI 开发治理系统
+# Aegis v3.1.0 — AI 开发治理系统
 
 > 规范驱动 · 设计先行 · 验证闭环 · 持续进化
 
@@ -359,7 +359,7 @@ Write-Host "🧹 已清理仓库自身文件" -ForegroundColor Gray
 Remove-Item $TempZip -Force -ErrorAction SilentlyContinue
 
 Write-Host ""
-Write-Host "🛡️  Aegis v3.0.7 安装完成！" -ForegroundColor Green
+Write-Host "🛡️  Aegis v3.1.0 安装完成！" -ForegroundColor Green
 
 # Boot Skill 导入说明
 if ($entryChoice -eq "7") {

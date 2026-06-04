@@ -1,11 +1,11 @@
 ---
 name: "aegis-boot"
-description: "Aegis AI Development Governance System Boot Loader v3.0.7. MANDATORY activation on any code-related task. Activates on: develop, create, modify, refactor, fix, implement, code, configure, requirement, feature, bug, optimize, test, deploy, build, design, review, debug, write, add, remove, update, change, improve."
+description: "Aegis AI Development Governance System Boot Loader v3.1.0. MANDATORY activation on any code-related task. Activates on: develop, create, modify, refactor, fix, implement, code, configure, requirement, feature, bug, optimize, test, deploy, build, design, review, debug, write, add, remove, update, change, improve."
 ---
 
-# Aegis Boot v3.0.7
+# Aegis Boot v3.1.0
 
-> This project uses **Aegis v3.0.7** — AI Development Governance System.
+> This project uses **Aegis v3.1.0** — AI Development Governance System.
 > You are the AI. This is your mandatory activation sequence.
 > **Do not skip, reorder, or compress any step.**
 
@@ -38,15 +38,19 @@ Use the classification table in the workflow engine. **Tell the user your classi
 #### L1 — Quick Fix
 
 ```
-1. Write DevLog → Aegis/rules/DevLogs/
-2. Update INDEX → Aegis_Specs/INDEX.md
-3. Make the code change
-4. Show change summary (file paths + lines added/removed + what changed)
+0. Register in Aegis_Specs/INDEX.md (status: 🔨 implementing)
+1. Make the code change
+2. Show change summary (file paths + lines added/removed + what changed)
    → wait for user confirmation
    → **DO NOT touch git/svn unless user explicitly asks**
+3. Write DevLog → Aegis/rules/DevLogs/
+4. Update INDEX.md (mark ✅ done)
 ```
 
-**BOUNDARY CHECK**: `Aegis_Specs/INDEX.md` updated ✅ + DevLog written ✅
+**BOUNDARY CHECK** (use `read` tool to verify):
+- [ ] `Aegis_Specs/INDEX.md` has entry for current requirement?
+- [ ] `Aegis_Specs/INDEX.md` status = ✅ done?
+- [ ] DevLog written?
 
 ---
 
@@ -55,20 +59,27 @@ Use the classification table in the workflow engine. **Tell the user your classi
 ##### L2-1: Design
 
 ```
+Step 0: Register in Aegis_Specs/INDEX.md (status: 📐 design)
 Step 1: Create Aegis_Specs/L2/{feature-name}/design.md using the template
 Step 2: Present the plan to the user in chat
-Step 3: WAIT for explicit user approval (e.g., "OK", "go ahead", "approved")
+Step 3: Check acceptance criteria — are they in user's language (not technical)?
+        → If acceptance criteria are technical (e.g. "no overflow", "no error"),
+          supplement with user-perspective description (e.g. "content fills when window enlarges")
+Step 4: WAIT for explicit user approval (e.g., "OK", "go ahead", "approved")
 ```
 
 **BOUNDARY CHECK** (use `read` tool to verify):
+- [ ] `Aegis_Specs/INDEX.md` has entry for current requirement (status 📐 design)?
 - [ ] `Aegis_Specs/L2/{feature-name}/design.md` exists?
+- [ ] Acceptance criteria expressed in user language?
 - [ ] User has explicitly confirmed?
 
-**If either fails → STOP. Do not proceed to L2-2.**
+**If any fails → STOP. Do not proceed to L2-2.**
 
 ##### L2-2: Implement
 
 ```
+Step 0: Update Aegis_Specs/INDEX.md status to 🔨 implementing
 Step 1: Write code according to design.md
 Step 2: Run typecheck / lint / build to verify
 Step 3: Show change summary (file paths + lines added/removed + what changed)
@@ -77,10 +88,11 @@ Step 4: Wait for user confirmation
 ```
 
 **BOUNDARY CHECK** (use `read` tool to verify):
+- [ ] `Aegis_Specs/INDEX.md` status = 🔨 implementing?
 - [ ] Code compiles / passes lint?
 - [ ] Change summary shown to user?
 
-**If either fails → fix before proceeding to L2-3.**
+**If any fails → fix before proceeding to L2-3.**
 
 ##### L2-3: Verify & Close
 

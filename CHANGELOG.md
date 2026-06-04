@@ -25,6 +25,7 @@
 | 2026-06-03 | v3.0.6 | 社区生态：新增 CONTRIBUTING.md + GitHub Issue 模板；install.ps1 增加 --Verify 参数；新增 update-aegis.ps1 升级脚本；install 清理 .github/ + CONTRIBUTING.md |
 | 2026-06-03 | v3.0.6 | 规则改进：diff 展示改为改动摘要 + 不得擅自执行 git/svn；global.md 新增「已验收代码不得擅自修改」铁律；AI 自检清单同步新规则；Aegis_Intro.md L1 描述同步更新 |
 | 2026-06-03 | v3.0.7 | 版本号规范化：采用 L1→patch / L2→minor / L3→major 规则；全局版本号 3.0.6 → 3.0.7 |
+| 2026-06-04 | v3.1.0 | 流程强化：L1/L2 新增 INDEX.md 登记步骤（Step 0）；L2 新增验收标准用户视角检查；spec-L2/design/proposal 模板新增方案风险边界 section；INDEX.md 登记嵌入 Boundary Check；反借口表补全；全局版本号 3.0.7 → 3.1.0 |
 
 ---
 
@@ -36,3 +37,4 @@
 | [v3.0.5](https://github.com/Szy-Fxy/Aegis/releases/tag/v3.0.5) | 文件结构重构 + 多入口安装 + 自举规范化 |
 | [v3.0.6](https://github.com/Szy-Fxy/Aegis/releases/tag/v3.0.6) | L2 流程强化 + aegis-boot 升级 + 社区生态 |
 | [v3.0.7](https://github.com/Szy-Fxy/Aegis/releases/tag/v3.0.7) | 规则改进 + 版本号规范化 |
+| [v3.1.0](https://github.com/Szy-Fxy/Aegis/releases/tag/v3.1.0) | 流程强化：INDEX.md 登记 + 验收标准 + 风险边界 |

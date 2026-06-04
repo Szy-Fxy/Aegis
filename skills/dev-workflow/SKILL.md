@@ -3,7 +3,7 @@ name: "dev-workflow"
 description: "Aegis 开发工作流核心引擎。定义需求分级(L1/L2/L3)、阶段流程、规则加载、进程恢复、TempData 管理、DevLogs 记录等全部工作流规则。"
 ---
 
-# 开发工作流引擎 v3.0.6
+# 开发工作流引擎 v3.0.7
 
 ## 概述
 

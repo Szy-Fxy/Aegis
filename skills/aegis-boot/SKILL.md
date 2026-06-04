@@ -1,11 +1,11 @@
 ---
 name: "aegis-boot"
-description: "Aegis AI Development Governance System Boot Loader v3.0.6. MANDATORY activation on any code-related task. Activates on: develop, create, modify, refactor, fix, implement, code, configure, requirement, feature, bug, optimize, test, deploy, build, design, review, debug, write, add, remove, update, change, improve."
+description: "Aegis AI Development Governance System Boot Loader v3.0.7. MANDATORY activation on any code-related task. Activates on: develop, create, modify, refactor, fix, implement, code, configure, requirement, feature, bug, optimize, test, deploy, build, design, review, debug, write, add, remove, update, change, improve."
 ---
 
-# Aegis Boot v3.0.6
+# Aegis Boot v3.0.7
 
-> This project uses **Aegis v3.0.6** — AI Development Governance System.
+> This project uses **Aegis v3.0.7** — AI Development Governance System.
 > You are the AI. This is your mandatory activation sequence.
 > **Do not skip, reorder, or compress any step.**
 

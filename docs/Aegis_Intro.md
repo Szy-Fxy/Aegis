@@ -1,4 +1,4 @@
-# Aegis v3.0.6
+# Aegis v3.0.7
 
 ## AI Development Governance System
 
@@ -562,6 +562,7 @@ Engineering Partner
 | 2026-06-02 | v3.0.6 | L2 强化：每阶段增加 BOUNDARY CHECK + 失败恢复 + 阶段边界检查；aegis-boot 全面升级（MANDATORY SEQUENCE + 可执行边界检查）；全局版本号 3.0.5 → 3.0.6 |
 | 2026-06-03 | v3.0.6 | 社区生态：新增 CONTRIBUTING.md + GitHub Issue 模板；install.ps1 增加 --Verify 参数；新增 update-aegis.ps1 升级脚本 |
 | 2026-06-03 | v3.0.6 | 规则改进：diff 展示改为改动摘要 + 不得擅自执行 git/svn；global.md 新增「已验收代码不得擅自修改」铁律 |
+| 2026-06-03 | v3.0.7 | 版本号规范化：采用 L1→patch / L2→minor / L3→major 规则；全局版本号 3.0.6 → 3.0.7 |
 | 2026-05-31 | v3.0.2 | 融合 Karpathy Skills：完整 Aegis_Protocol.md 生成、.cursor/rules/aegis.mdc、Anti-Patterns 速查表、Key Insight 循环验证、README 升级、跨 IDE 支持矩阵、How to Know It's Working |
 
 ---

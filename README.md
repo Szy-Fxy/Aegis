@@ -7,7 +7,7 @@
 > ⚠️ **Aegis 纯 SKILL.md 版本（v3.1.x）已于 2026-06-05 弃用**
 > 
 > 推荐升级到 **Aegis Toolchain**（`aegis` CLI 工具），获得结构化状态管理、独立 BOUNDARY CHECK 和 Git Hook 兜底防线。
-> 详见 [Aegis Toolchain](https://github.com/Szy-Fxy/aegis-toolchain)
+> 详见 [Aegis Toolchain](../../tree/toolchain)
 > 
 > 如需继续使用此旧版本，请在 `v3.1.0` 标签下查找。
 

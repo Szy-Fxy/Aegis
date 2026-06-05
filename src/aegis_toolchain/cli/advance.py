@@ -1,0 +1,99 @@
+"""aegis advance — 推进需求到下一阶段"""
+
+from pathlib import Path
+
+import typer
+
+from aegis_toolchain.core.state_manager import StateManager
+from aegis_toolchain.core.boundary_checker import BoundaryChecker
+from aegis_toolchain.models.state import RequirementPhase
+
+PHASE_NEXT_L2: dict[RequirementPhase, RequirementPhase] = {
+    RequirementPhase.DESIGN: RequirementPhase.IMPLEMENTING,
+    RequirementPhase.IMPLEMENTING: RequirementPhase.DONE,
+}
+
+PHASE_NEXT_L3: dict[RequirementPhase, RequirementPhase] = {
+    RequirementPhase.BRAINSTORM: RequirementPhase.PROPOSAL,
+    RequirementPhase.PROPOSAL: RequirementPhase.DESIGN,
+    RequirementPhase.DESIGN: RequirementPhase.SPEC,
+    RequirementPhase.SPEC: RequirementPhase.REVIEW,
+    RequirementPhase.REVIEW: RequirementPhase.IMPLEMENTING,
+    RequirementPhase.IMPLEMENTING: RequirementPhase.DONE,
+}
+
+PHASE_NEXT: dict[RequirementPhase, RequirementPhase] = {
+    RequirementPhase.BRAINSTORM: RequirementPhase.PROPOSAL,
+    RequirementPhase.PROPOSAL: RequirementPhase.DESIGN,
+    RequirementPhase.DESIGN: RequirementPhase.SPEC,
+    RequirementPhase.SPEC: RequirementPhase.REVIEW,
+    RequirementPhase.REVIEW: RequirementPhase.IMPLEMENTING,
+    RequirementPhase.IMPLEMENTING: RequirementPhase.DONE,
+}
+
+PHASE_DISPLAY = {
+    RequirementPhase.BRAINSTORM: "📋 brainstorm",
+    RequirementPhase.PROPOSAL: "📋 proposal",
+    RequirementPhase.DESIGN: "📐 design",
+    RequirementPhase.SPEC: "📝 spec",
+    RequirementPhase.REVIEW: "📋 review",
+    RequirementPhase.IMPLEMENTING: "🔨 implementing",
+    RequirementPhase.DONE: "✅ done",
+    RequirementPhase.PAUSED: "⏸️ paused",
+    RequirementPhase.CANCELLED: "❌ cancelled",
+}
+
+
+def cmd_advance(
+    requirement_id: str = typer.Argument(None, help="需求 ID，默认当前活跃需求"),
+    force: bool = typer.Option(False, "--force", "-f", help="跳过 BOUNDARY CHECK 强制推进"),
+    project: Path = typer.Option(Path("."), "--project", "-p", help="项目路径"),
+) -> None:
+    """推进需求到下一阶段"""
+    manager = StateManager(project)
+    state = manager.load()
+
+    if requirement_id is None:
+        if not state.active_requirements:
+            typer.secho("❌ 没有活跃需求", fg="red")
+            raise typer.Exit(1)
+        req = state.active_requirements[0]
+    else:
+        req = manager.get_requirement(requirement_id)
+        if req is None:
+            typer.secho(f"❌ 未找到需求: {requirement_id}", fg="red")
+            raise typer.Exit(1)
+
+    if not force:
+        checker = BoundaryChecker(project)
+        report = checker.check(req)
+        if not report.all_passed:
+            typer.secho(f"❌ BOUNDARY CHECK 未通过 ({report.passed_count}/{report.total_count}):", fg="red")
+            for r in report.results:
+                icon = "✅" if r.passed else "✗"
+                color = "green" if r.passed else "red"
+                typer.secho(f"  {icon} {r.name}: {r.detail}", fg=color)
+            typer.secho("\n请完成缺失项后重试，或使用 --force 强制推进", fg="yellow")
+            raise typer.Exit(1)
+        typer.secho(f"✅ BOUNDARY CHECK 全部通过 ({report.total_count}/{report.total_count})", fg="green")
+    else:
+        typer.secho("⚠️  --force: 跳过 BOUNDARY CHECK，强制推进", fg="yellow")
+
+    old_phase = req.phase
+    phase_map = PHASE_NEXT_L3 if req.level.value == "L3" else PHASE_NEXT_L2
+    next_phase = phase_map.get(old_phase)
+    if next_phase is None:
+        typer.secho(f"ℹ️  {req.id} 已处于终态 ({old_phase.value})", fg="blue")
+        return
+
+    manager.update_requirement(req.id, phase=next_phase)
+    next_display = PHASE_DISPLAY.get(next_phase, next_phase.value)
+    typer.secho(f"✅ {req.id} {req.title}: {old_phase.value} → {next_display}", fg="green")
+
+    if next_phase == RequirementPhase.DONE:
+        req.phase = RequirementPhase.DONE  # 更新本地对象
+        state = manager.load()
+        state.active_requirements = [r for r in state.active_requirements if r.id != req.id]
+        state.completed_requirements.append(req)
+        manager.save(state)
+        typer.secho(f"🎉 {req.id} 已完成！", fg="green")

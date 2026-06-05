@@ -2,14 +2,14 @@
 # 目前全依赖AI主动读取规则触发，不可取。
 # 正在找转型方向，如果你有好的想法欢迎在议题中讨论。
 
-# Aegis  AI 开发治理系统
+# Aegis v3.1.x 已归档（纯 SKILL.md 版本）
 
-> ⚠️ **Aegis 纯 SKILL.md 版本（v3.1.x）已于 2026-06-05 弃用**
+> ⚠️ **此分支已于 2026-06-05 归档**
 > 
-> 推荐升级到 **Aegis Toolchain**（`aegis` CLI 工具），获得结构化状态管理、独立 BOUNDARY CHECK 和 Git Hook 兜底防线。
-> 详见 [Aegis Toolchain](../../tree/toolchain)
+> Aegis 已升级为 **Aegis Toolchain**（CLI 工具 + 结构化状态管理 + Git Hook）。
+> 请移步 [`main`](../../tree/main) 分支获取最新版本。
 > 
-> 如需继续使用此旧版本，请在 `v3.1.0` 标签下查找。
+> 此分支保留用于历史参考。如需下载旧版，使用 tag `v3.1.0`。
 
 > 规范驱动  设计先行  验证闭环  持续进化
 

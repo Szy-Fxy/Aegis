@@ -5,6 +5,9 @@
 | ID | 需求名 | 级别 | 状态 | 开始日期 | 最后活动 |
 |----|--------|------|------|----------|----------|
 | REQ-001 | v3.1.0-feedback-improvements | L2 | ✅ done | 2026-06-04 | 2026-06-04 |
+| REQ-002 | aegis-toolchain | L3 | ✅ done | 2026-06-05 | 2026-06-05 |
+| REQ-003 | aegis-toolchain-phase2-mcp | L3 | 📋 brainstorm | 2026-06-05 | 2026-06-05 |
+| REQ-004 | aegis-toolchain-phase3-full-mcp | L3 | 📋 brainstorm | 2026-06-05 | 2026-06-05 |
 
 ---
 

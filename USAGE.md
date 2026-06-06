@@ -23,10 +23,10 @@ $env:Path = [Environment]::GetEnvironmentVariable("Path","User") + ";" + [Enviro
 > 第一段 `$env:Path = ...` 是刷新环境变量，让系统找到刚装的 Python 和 pip。
 > 装了 Python 后一定要关掉 CMD 重新打开，或者运行这条刷新命令，否则 `pip` 找不到。
 
-### 3. 进入你的游戏项目并初始化
+### 3. 进入你的项目并初始化
 
 ```powershell
-cd D:\你的游戏项目文件夹路径
+cd D:\你的项目文件夹路径
 aegis init
 ```
 
@@ -57,7 +57,7 @@ aegis status
 
 ## 开始开发
 
-打开 Hana（或其他 AI 工具），打开你的游戏项目文件夹，然后像平时一样和 AI 对话。
+打开 Hana（或其他 AI 工具），打开你的项目文件夹，然后像平时一样和 AI 对话。
 
 你只需要说需求，AI 会自动：
 - 判断任务是简单修复（L1）还是功能开发（L2）还是架构重构（L3）

@@ -39,9 +39,10 @@ class IndexManager:
     def add_entry(self, req_id: str, title: str, level: str, status: str) -> None:
         """在 INDEX.md 表格末尾新增一行"""
         today = datetime.now().strftime("%Y-%m-%d")
+        safe_title = title.replace("|", "/").replace("\n", " ")
 
         if not self.path.exists():
-            self._create_new(title, req_id, level, status, today)
+            self._create_new(safe_title, req_id, level, status, today)
             return
 
         content = self.path.read_text(encoding="utf-8")
@@ -65,10 +66,10 @@ class IndexManager:
             logger.warning("无法定位 INDEX.md 表格位置，追加到文件末尾")
             insert_idx = len(lines)
 
-        new_row = f"| {req_id} | {title} | {level} | {status} | {today} | {today} |"
+        new_row = f"| {req_id} | {safe_title} | {level} | {status} | {today} | {today} |"
         lines.insert(insert_idx, new_row)
         self.path.write_text("\n".join(lines), encoding="utf-8")
-        logger.info(f"INDEX.md: 新增 {req_id} — {title}")
+        logger.info(f"INDEX.md: 新增 {req_id} — {safe_title}")
 
     def update_status(self, req_id: str, status: str) -> None:
         """更新指定需求的状态列和最后活动日期"""
@@ -125,9 +126,12 @@ class IndexManager:
 | 📋 brainstorm | 方案讨论中 |
 | 📋 proposal | 方案已定，待审核 |
 | 📐 design | 技术设计中 |
+| 📋 review_design | 设计审查中 |
 | 📝 spec | 需求规格编写中 |
-| 📋 review | 审核中 |
+| 📋 review | 集成审核中 |
 | 🔨 implementing | 代码实现中 |
+| 📋 review_code | 代码审查中 |
+| ✅ verify | 验收中 |
 | ✅ done | 已完成 |
 | ⏸️ paused | 暂停 |
 | ❌ cancelled | 取消 |

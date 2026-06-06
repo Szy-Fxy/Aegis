@@ -27,6 +27,7 @@ class StateManager:
     """state.json 管理器，提供线程/进程安全的 CRUD 操作"""
 
     LOCK_TIMEOUT = 5  # 秒
+    SAVE_RETRIES = 3  # save 失败重试次数
 
     def __init__(self, project_path: Path) -> None:
         self.project_path = project_path
@@ -43,8 +44,13 @@ class StateManager:
             with lock.acquire(timeout=self.LOCK_TIMEOUT):
                 return self._load_unlocked()
         except Timeout:
-            logger.warning("filelock 获取超时，以只读模式加载")
-            return self._load_unlocked()
+            logger.warning("filelock 获取超时，重试一次")
+            try:
+                with lock.acquire(timeout=self.LOCK_TIMEOUT * 2):
+                    return self._load_unlocked()
+            except Timeout:
+                logger.error("filelock 重试仍超时，以无锁模式加载（可能读到不一致数据）")
+                return self._load_unlocked()
 
     def _load_unlocked(self) -> AegisState:
         if not self.state_path.exists():
@@ -60,18 +66,26 @@ class StateManager:
             raise StateCorruptedError(f"数据校验失败: {e}")
 
     def save(self, state: AegisState) -> None:
-        """原子写入 state.json（写临时文件 + rename）"""
-        lock = FileLock(str(self.lock_path), timeout=self.LOCK_TIMEOUT)
+        """原子写入 state.json（临时文件 + rename，带重试）"""
+        import time as _time
 
-        try:
-            with lock.acquire(timeout=self.LOCK_TIMEOUT):
-                json_str = state.model_dump_json(indent=2, ensure_ascii=False)
-                atomic_write(self.state_path, json_str + "\n")
-        except Timeout:
-            logger.error("filelock 获取超时，state.json 未保存")
-            raise RuntimeError(
-                "状态文件被其他进程占用，等待超时（5秒）。请稍后重试。"
-            )
+        for attempt in range(self.SAVE_RETRIES):
+            lock = FileLock(str(self.lock_path), timeout=self.LOCK_TIMEOUT)
+            try:
+                with lock.acquire(timeout=self.LOCK_TIMEOUT):
+                    json_str = state.model_dump_json(indent=2, ensure_ascii=False)
+                    atomic_write(self.state_path, json_str + "\n")
+                    return
+            except Timeout:
+                if attempt < self.SAVE_RETRIES - 1:
+                    delay = 0.5 * (2 ** attempt)
+                    logger.warning(f"filelock 获取超时，{delay}s 后重试 ({attempt + 1}/{self.SAVE_RETRIES})")
+                    _time.sleep(delay)
+                else:
+                    logger.error("filelock 获取超时，state.json 未保存")
+                    raise RuntimeError(
+                        "状态文件被其他进程占用，重试 3 次仍超时。请稍后重试。"
+                    )
 
     def get_active_requirement(self) -> Optional[Requirement]:
         """获取当前 implementing 的需求"""

@@ -1,6 +1,7 @@
 """aegis devlog — DevLog 的生成、写入和查看"""
 
 import os
+import re
 import subprocess
 import tempfile
 from datetime import datetime
@@ -64,7 +65,8 @@ def write(
     ensure_dir(devlog_dir)
 
     date_str = datetime.now().strftime("%Y-%m-%d")
-    filename = f"{date_str}-{requirement_id}-{req.title[:20]}.md"
+    safe_title = re.sub(r'[\\/:*?"<>|]', '_', req.title[:20])
+    filename = f"{date_str}-{requirement_id}-{safe_title}.md"
     filepath = devlog_dir / filename
 
     content = DEVLOG_TEMPLATE.format(

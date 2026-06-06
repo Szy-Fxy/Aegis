@@ -6,19 +6,6 @@ from pathlib import Path
 import typer
 
 from aegis_toolchain.core.state_manager import StateManager
-from aegis_toolchain.models.state import RequirementPhase
-
-PHASE_DISPLAY: dict[RequirementPhase, str] = {
-    RequirementPhase.BRAINSTORM: "📋 brainstorm",
-    RequirementPhase.PROPOSAL: "📋 proposal",
-    RequirementPhase.DESIGN: "📐 design",
-    RequirementPhase.SPEC: "📝 spec",
-    RequirementPhase.REVIEW: "📋 review",
-    RequirementPhase.IMPLEMENTING: "🔨 implementing",
-    RequirementPhase.DONE: "✅ done",
-    RequirementPhase.PAUSED: "⏸️ paused",
-    RequirementPhase.CANCELLED: "❌ cancelled",
-}
 
 
 def cmd_status(
@@ -64,21 +51,19 @@ def cmd_status(
 
 
 def _print_requirement_row(req) -> None:
-    phase_str = PHASE_DISPLAY.get(req.phase, req.phase.value)
     typer.secho(
-        f"  {req.id}  {req.title:<30}  [{req.level.value}]  {phase_str}",
+        f"  {req.id}  {req.title:<30}  [{req.level.value}]  {req.phase.display}",
         fg="white",
     )
 
 
 def _print_requirement_detail(req) -> None:
-    phase_str = PHASE_DISPLAY.get(req.phase, req.phase.value)
     typer.secho(f"\n{'='*50}", fg="cyan")
     typer.secho(f"  {req.id} — {req.title}", fg="cyan", bold=True)
     typer.secho(f"{'='*50}\n", fg="cyan")
 
     typer.secho(f"  等级:     {req.level.value}")
-    typer.secho(f"  阶段:     {phase_str}")
+    typer.secho(f"  阶段:     {req.phase.display}")
     typer.secho(f"  创建:     {req.created.strftime('%Y-%m-%d %H:%M')}")
     typer.secho(f"  最后活动: {req.last_activity.strftime('%Y-%m-%d %H:%M')}")
 

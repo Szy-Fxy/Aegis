@@ -258,8 +258,7 @@ Step 2: 逐条对照 design.md 中定义的验收标准，填写验证结果
 Step 3: 汇总改动摘要（修改的文件路径 + 增删行数 + 改动点简述）
 Step 4: 向用户展示 verify.md → 等待用户明确确认
        （**不得擅自执行任何 git/svn 操作**）
-Step 5: 用户确认后 → aegis advance → ✅ done
-Step 6: 写 DevLog 到 Aegis/rules/DevLogs/
+Step 5: 用户确认后 → 写 DevLog 到 Aegis/rules/DevLogs/ → aegis advance → ✅ done
 ```
 
 **BOUNDARY CHECK**（调用 `aegis check`）：

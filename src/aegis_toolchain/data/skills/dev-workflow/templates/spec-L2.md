@@ -1,6 +1,6 @@
 # L2 方案设计模板
 
-> L2 阶段合并文档：一个文件搞定 brainstorm + proposal + design + spec。
+> L2 方案设计文档，定义技术方案、API 签名、数据结构和用户验收标准。
 
 ```markdown
 # {功能名称} — 方案设计

@@ -27,6 +27,25 @@ class RequirementPhase(str, Enum):
     PAUSED = "paused"
     CANCELLED = "cancelled"
 
+    @property
+    def display(self) -> str:
+        """统一阶段显示名称（emoji + 中文），所有 CLI 命令共享"""
+        _map: dict[str, str] = {
+            "brainstorm": "📋 brainstorm",
+            "proposal": "📋 proposal",
+            "design": "📐 design",
+            "review_design": "📋 review_design",
+            "spec": "📝 spec",
+            "review": "📋 review",
+            "implementing": "🔨 implementing",
+            "review_code": "📋 review_code",
+            "verify": "✅ verify",
+            "done": "✅ done",
+            "paused": "⏸️ paused",
+            "cancelled": "❌ cancelled",
+        }
+        return _map.get(self.value, self.value)
+
 
 class BoundaryChecks(BaseModel):
     """各阶段 BOUNDARY CHECK 的记录"""

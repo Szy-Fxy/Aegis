@@ -3,11 +3,16 @@
 from pathlib import Path
 
 import typer
+from loguru import logger
 
 from aegis_toolchain.core.state_manager import StateManager
 from aegis_toolchain.core.boundary_checker import BoundaryChecker
 from aegis_toolchain.core.index_manager import IndexManager
 from aegis_toolchain.models.state import RequirementPhase
+
+PHASE_NEXT_L1: dict[RequirementPhase, RequirementPhase] = {
+    RequirementPhase.IMPLEMENTING: RequirementPhase.DONE,
+}
 
 PHASE_NEXT_L2: dict[RequirementPhase, RequirementPhase] = {
     RequirementPhase.DESIGN: RequirementPhase.REVIEW_DESIGN,
@@ -37,31 +42,11 @@ PHASE_INDEX_STATUS: dict[RequirementPhase, str] = {
     RequirementPhase.REVIEW_CODE: "📋 review_code",
     RequirementPhase.VERIFY: "✅ verify",
     RequirementPhase.DONE: "✅ done",
-}
-
-PHASE_NEXT: dict[RequirementPhase, RequirementPhase] = {
-    RequirementPhase.BRAINSTORM: RequirementPhase.PROPOSAL,
-    RequirementPhase.PROPOSAL: RequirementPhase.DESIGN,
-    RequirementPhase.DESIGN: RequirementPhase.SPEC,
-    RequirementPhase.SPEC: RequirementPhase.REVIEW,
-    RequirementPhase.REVIEW: RequirementPhase.IMPLEMENTING,
-    RequirementPhase.IMPLEMENTING: RequirementPhase.DONE,
-}
-
-PHASE_DISPLAY = {
-    RequirementPhase.BRAINSTORM: "📋 brainstorm",
-    RequirementPhase.PROPOSAL: "📋 proposal",
-    RequirementPhase.DESIGN: "📐 design",
-    RequirementPhase.REVIEW_DESIGN: "📋 review_design",
-    RequirementPhase.SPEC: "📝 spec",
-    RequirementPhase.REVIEW: "📋 review",
-    RequirementPhase.IMPLEMENTING: "🔨 implementing",
-    RequirementPhase.REVIEW_CODE: "📋 review_code",
-    RequirementPhase.VERIFY: "✅ verify",
-    RequirementPhase.DONE: "✅ done",
     RequirementPhase.PAUSED: "⏸️ paused",
     RequirementPhase.CANCELLED: "❌ cancelled",
 }
+
+PHASE_DISPLAY = {p: p.display for p in RequirementPhase}
 
 
 def cmd_advance(
@@ -97,10 +82,20 @@ def cmd_advance(
             raise typer.Exit(1)
         typer.secho(f"✅ BOUNDARY CHECK 全部通过 ({report.total_count}/{report.total_count})", fg="green")
     else:
+        confirm = typer.confirm(f"⚠️  跳过 BOUNDARY CHECK 强制推进 {req.id}？")
+        if not confirm:
+            typer.secho("已取消", fg="yellow")
+            raise typer.Exit(0)
+        logger.warning(f"FORCE ADVANCE: {req.id} {req.phase.value} → (跳过检查)")
         typer.secho("⚠️  --force: 跳过 BOUNDARY CHECK，强制推进", fg="yellow")
 
     old_phase = req.phase
-    phase_map = PHASE_NEXT_L3 if req.level.value == "L3" else PHASE_NEXT_L2
+    if req.level.value == "L3":
+        phase_map = PHASE_NEXT_L3
+    elif req.level.value == "L2":
+        phase_map = PHASE_NEXT_L2
+    else:
+        phase_map = PHASE_NEXT_L1
     next_phase = phase_map.get(old_phase)
     if next_phase is None:
         typer.secho(f"ℹ️  {req.id} 已处于终态 ({old_phase.value})", fg="blue")

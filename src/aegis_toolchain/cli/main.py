@@ -6,7 +6,7 @@ from aegis_toolchain.utils.logging import setup_logging
 
 app = typer.Typer(
     name="aegis",
-    help="Aegis 开发治理工具链 — 让流程约束从 AI 自律转向工具强制",
+    help="Aegis 开发治理工具链 v4.0.1 — 让流程约束从 AI 自律转向工具强制",
     no_args_is_help=True,
 )
 

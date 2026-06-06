@@ -96,8 +96,10 @@ class BoundaryChecker:
 
     def _check_l2_review_design(self, req: Requirement) -> list[CheckResult]:
         review_path = self._review_path(req)
+        design_path = self._spec_path(req) / "design.md"
         return [
             self._check_index_registered(req.id),
+            self._check_file(design_path, "设计文档（前置验证）"),
             self._check_file(review_path, "审查文档"),
             CheckResult(
                 name="设计审查",
@@ -107,8 +109,12 @@ class BoundaryChecker:
         ]
 
     def _check_l2_implementing(self, req: Requirement) -> list[CheckResult]:
+        design_path = self._spec_path(req) / "design.md"
+        review_path = self._review_path(req)
         return [
             self._check_index_status(req.id),
+            self._check_file(design_path, "设计文档（前置验证）"),
+            self._check_file(review_path, "审查文档（前置验证）"),
             CheckResult(
                 name="代码编译",
                 passed=True,
@@ -118,8 +124,10 @@ class BoundaryChecker:
 
     def _check_l2_review_code(self, req: Requirement) -> list[CheckResult]:
         review_path = self._review_path(req)
+        design_path = self._spec_path(req) / "design.md"
         return [
             self._check_index_status(req.id),
+            self._check_file(design_path, "设计文档（前置验证）"),
             self._check_file(review_path, "审查文档"),
             CheckResult(
                 name="代码审查",
@@ -130,8 +138,10 @@ class BoundaryChecker:
 
     def _check_l2_verify(self, req: Requirement) -> list[CheckResult]:
         verify_path = self._spec_path(req) / "verify.md"
+        review_path = self._review_path(req)
         return [
             self._check_index_registered(req.id),
+            self._check_file(review_path, "审查文档（前置验证）"),
             self._check_file(verify_path, "验收报告"),
         ]
 
@@ -148,10 +158,11 @@ class BoundaryChecker:
     # ── 辅助路径 ───────────────────────────
 
     def _spec_path(self, req: Requirement) -> Path:
-        """根据需求等级返回 spec 目录路径"""
+        """根据需求等级返回 spec 目录路径，对标题做路径净化"""
+        safe = req.title.replace("\\", "_").replace("/", "_").replace("..", "_")
         if req.level == RequirementLevel.L3:
-            return self.project_path / "Aegis_Specs" / "L3" / req.title
-        return self.project_path / "Aegis_Specs" / "L2" / req.title
+            return self.project_path / "Aegis_Specs" / "L3" / safe
+        return self.project_path / "Aegis_Specs" / "L2" / safe
 
     def _review_path(self, req: Requirement) -> Path:
         return self._spec_path(req) / "review.md"
@@ -176,8 +187,10 @@ class BoundaryChecker:
             # review 阶段还需检查 05-tasks.md
             for fname, label in [("05-tasks.md", "任务拆分"), ("06-review.md", "集成审核")]:
                 results.append(self._check_file(l3_dir / fname, label))
-        elif phase in (RequirementPhase.IMPLEMENTING, RequirementPhase.DONE):
+        elif phase in (RequirementPhase.IMPLEMENTING):
             return self._check_l2_implementing(req)
+        elif phase == RequirementPhase.DONE:
+            return self._check_l2_done(req)
         elif phase in phase_files:
             fname, label = phase_files[phase]
             results.append(self._check_file(l3_dir / fname, label))

@@ -6,6 +6,7 @@ import typer
 
 from aegis_toolchain.core.state_manager import StateManager
 from aegis_toolchain.core.boundary_checker import BoundaryChecker
+from aegis_toolchain.core.index_manager import IndexManager
 from aegis_toolchain.models.state import RequirementPhase
 
 PHASE_NEXT_L2: dict[RequirementPhase, RequirementPhase] = {
@@ -20,6 +21,16 @@ PHASE_NEXT_L3: dict[RequirementPhase, RequirementPhase] = {
     RequirementPhase.SPEC: RequirementPhase.REVIEW,
     RequirementPhase.REVIEW: RequirementPhase.IMPLEMENTING,
     RequirementPhase.IMPLEMENTING: RequirementPhase.DONE,
+}
+
+PHASE_INDEX_STATUS: dict[RequirementPhase, str] = {
+    RequirementPhase.BRAINSTORM: "📋 brainstorm",
+    RequirementPhase.PROPOSAL: "📋 proposal",
+    RequirementPhase.DESIGN: "📐 design",
+    RequirementPhase.SPEC: "📝 spec",
+    RequirementPhase.REVIEW: "📋 review",
+    RequirementPhase.IMPLEMENTING: "🔨 implementing",
+    RequirementPhase.DONE: "✅ done",
 }
 
 PHASE_NEXT: dict[RequirementPhase, RequirementPhase] = {
@@ -87,6 +98,14 @@ def cmd_advance(
         return
 
     manager.update_requirement(req.id, phase=next_phase)
+
+    # 同步更新 INDEX.md
+    status = PHASE_INDEX_STATUS.get(next_phase, next_phase.value)
+    try:
+        idx = IndexManager(project)
+        idx.update_status(req.id, status)
+    except Exception:
+        pass  # INDEX.md 不存在时不阻塞
     next_display = PHASE_DISPLAY.get(next_phase, next_phase.value)
     typer.secho(f"✅ {req.id} {req.title}: {old_phase.value} → {next_display}", fg="green")
 

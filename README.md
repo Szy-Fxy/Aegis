@@ -1,6 +1,6 @@
 # Aegis Toolchain
 
-> 🛠️ Aegis AI 开发治理工具链 v0.1.0-beta
+> 🛠️ Aegis AI 开发治理工具链 v4.0.1
 > 让流程约束从 AI 自律转向工具强制
 
 ---
@@ -88,7 +88,7 @@ src/aegis_toolchain/
 
 | 阶段 | 内容 | 状态 |
 |------|------|------|
-| Phase 1 | CLI + state.json + pre-commit hook | ✅ v0.1.0-beta |
+| Phase 1 | CLI + state.json + pre-commit hook | ✅ v4.0.1 |
 | Phase 2 | MCP Server + YAML 状态机 | 📋 规划中 |
 | Phase 3 | 全 MCP 生态 | 📋 规划中 |
 

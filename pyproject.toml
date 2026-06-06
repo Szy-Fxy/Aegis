@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [project]
 name = "aegis-toolchain"
-version = "0.1.0"
+version = "4.0.1"
 description = "Aegis AI 开发治理工具链 — 让流程约束从 AI 自律转向工具强制"
 readme = "README.md"
 license = "MIT"

@@ -1,5 +1,20 @@
 # Changelog
 
+## v5.1.0 (2026-06-06)
+
+### Added
+- aegis-boot SKILL.md 随 `aegis init` 分发至 `Aegis/skills/aegis-boot/`
+- `__version__ = "5.1.0"` 到 `__init__.py`
+- DevLogs 文件夹 README.md
+
+### Changed
+- aegis-boot SKILL.md 更新为 v5.0.0 CLI 命令指令
+- dev-workflow SKILL.md 更新为 v5.0.0 CLI 命令指令
+- TempData 目录清理（删除 6 个调研笔记，仅保留 README.md）
+
+### Fixed
+- `aegis check REQ-xxx` 修复：`state.get_requirement` → `manager.get_requirement`
+
 ## v5.0.0 (2026-06-06)
 
 ### Added

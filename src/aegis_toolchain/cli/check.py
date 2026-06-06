@@ -24,7 +24,7 @@ def cmd_check(
             raise typer.Exit(1)
         req = state.active_requirements[0]
     else:
-        req = state.get_requirement(requirement_id)
+        req = manager.get_requirement(requirement_id)
         if req is None:
             typer.secho(f"❌ 未找到需求: {requirement_id}", fg="red")
             typer.secho(f"   提示: 运行 'aegis status' 查看所有已登记的需求", fg="yellow")

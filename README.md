@@ -1,6 +1,6 @@
 # Aegis Toolchain
 
-> 🛠️ Aegis AI 开发治理工具链 v5.0.0
+> 🛠️ Aegis AI 开发治理工具链 v5.1.0
 > 让流程约束从 AI 自律转向工具强制
 
 ---

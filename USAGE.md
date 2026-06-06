@@ -1,186 +1,144 @@
 # Aegis Toolchain 使用指南
 
-> 从零开始，逐步上手
-
 ---
 
-## 第一步：安装
+## 🌱 小白 30 秒上手
+
+### 我不会命令行，怎么装？
+
+**Windows 用户**：下载 `install.ps1`，右键 → "使用 PowerShell 运行"，一路回车。
+
+**Mac 用户**：打开终端，粘贴下面两行：
 
 ```bash
-# 前提：Python ≥ 3.11 已安装
-git clone https://github.com/Szy-Fxy/Aegis.git aegis-toolchain
-cd aegis-toolchain
-pip install -e .
+curl -O https://raw.githubusercontent.com/Szy-Fxy/Aegis/main/install.sh
+bash install.sh
 ```
 
-验证安装：
-```bash
-aegis --help
-```
-你应该看到 6 个命令：`start` `check` `advance` `status` `devlog` `preprocess`
-
-## 第二步：在你的项目里初始化
-
-进入你已有的 Aegis 项目目录（确保有 `Aegis/rules/global.md`）：
+装完后，打开终端（或 PowerShell），输入：
 
 ```bash
-cd /path/to/your-project
+aegis start "我的第一个需求"
 ```
 
-如果你还没有 Aegis 项目，先创建一个最小骨架：
+完了。你已经创建了第一个需求。
 
-```bash
-mkdir -p my-project/Aegis/rules/DevLogs
-mkdir -p my-project/Aegis/rules/TechStack
-mkdir -p my-project/Aegis/skills/dev-workflow
-mkdir -p my-project/Aegis_Specs
-echo "# 全局规则" > my-project/Aegis/rules/global.md
-echo "# 工作流引擎" > my-project/Aegis/skills/dev-workflow/SKILL.md
-cd my-project
-```
-
-## 第三步：创建第一个需求
-
-```bash
-aegis start "修复登录页按钮颜色" --level auto
-```
-
-输出示例：
-```
-🔍 自动分类: L1 (置信度 75%)
-   理由: 匹配 L1 关键词: 修复, 颜色
-
-✅ 已登记 REQ-001 [L1] 修复登录页按钮颜色
-   阶段: 🔨 implementing
-   下一步: aegis check
-```
-
-> **发生了什么？** 系统自动分类了需求等级（L1），在 `Aegis/state/state.json` 中记录了需求，在 `Aegis_Specs/INDEX.md` 中登记了一行。
-
-## 第四步：查看状态
+### 我想看现在有什么需求
 
 ```bash
 aegis status
 ```
 
-```
-活跃需求:
-──────────────────────────────────────────────────────────────────────
-  REQ-001  修复登录页按钮颜色                   [L1]  🔨 implementing
+就这一条命令，所有的需求、状态、进度全显示出来。
 
-总计: 1 活跃, 0 已完成
-```
-
-查看单个需求详情：
-```bash
-aegis status REQ-001
-```
-
-## 第五步：执行 BOUNDARY CHECK
+### 我做完了一个需求，怎么标记完成
 
 ```bash
-aegis check
-```
-
-对于 L1 需求，系统会检查 INDEX.md 登记和 DevLog。如果 DevLog 还没写，会显示 ✗。
-
-## 第六步：写 DevLog 并完成
-
-```bash
-aegis devlog write REQ-001 -m "修复了登录按钮的 CSS 颜色变量"
+aegis devlog write REQ-001 -m "修好了登录按钮颜色"
 aegis advance
 ```
 
-```
-✅ BOUNDARY CHECK 全部通过 (2/2)
-✅ REQ-001 修复登录页按钮颜色: implementing → ✅ done
-🎉 REQ-001 已完成！
-```
+两行完事。
 
-## L2 需求完整流程
+---
 
-L2 需求比 L1 多一个设计阶段。完整流程：
+## 🔧 极客完整教程
+
+> 💡 *上面看不懂？没关系，从下面选你需要的看。*
+
+### 我想知道每个命令是干什么的
+
+| 我想... | 命令 | 举例 |
+|---------|------|------|
+| 开始一个需求 | `aegis start` | `aegis start "修bug"` |
+| 看需求进度 | `aegis status` | `aegis status` |
+| 检查当前阶段 | `aegis check` | `aegis check` |
+| 推进到下一步 | `aegis advance` | `aegis advance` |
+| 写开发日志 | `aegis devlog` | `aegis devlog write REQ-001 -m "完成了"` |
+| 看完整帮助 | `aegis --help` | |
+
+### 需求等级怎么选
+
+| 等级 | 什么时候用 | 会走什么流程 |
+|------|-----------|------------|
+| L1 | 改个颜色、修个 typo | 登记 → 改代码 → DevLog → 完成 |
+| L2 | 加新功能、优化模块 | 设计 → 实现 → DevLog → 完成 |
+| L3 | 架构重构、大改 | 7 阶段全流程 |
+| auto | 让系统自己判断 | `aegis start "标题" --level auto` |
+
+### L2 需求完整流程示范
 
 ```bash
-# 1. 开始
+# 第 1 步：开始
 aegis start "捕鱼炮台系统" --level L2
 
-# 2. 创建 design.md（手动或用 AI 写）
-mkdir -p Aegis_Specs/L2/捕鱼炮台系统
-echo "# 炮台系统设计" > Aegis_Specs/L2/捕鱼炮台系统/design.md
-echo "验收标准：玩家点击炮台按钮后，炮台在 0.5s 内出现并可发射子弹" >> Aegis_Specs/L2/捕鱼炮台系统/design.md
+# 第 2 步：写设计文档（手动创建或用 AI 帮你写）
+# 在 Aegis_Specs/L2/捕鱼炮台系统/design.md 写设计内容
 
-# 3. 检查设计阶段
-aegis check    # 应该 3/3 通过
+# 第 3 步：检查
+aegis check        # 应该全部通过
 
-# 4. 推进到实现
-aegis advance  # design → 🔨 implementing
+# 第 4 步：推进到实现
+aegis advance
 
-# 5. 写代码...
+# 第 5 步：写代码...（你自己写）
 
-# 6. 写 DevLog
-aegis devlog write REQ-001 -m "实现了炮台生成、瞄准和子弹发射"
+# 第 6 步：写 DevLog
+aegis devlog write REQ-001 -m "实现了炮台瞄准和发射"
 
-# 7. 完成
-aegis advance  # implementing → ✅ done
+# 第 7 步：完成
+aegis advance      # 🎉 已完成
 ```
 
-## 常用命令速查
-
-| 想做什么 | 命令 |
-|---------|------|
-| 开始需求 | `aegis start "标题" -l L2` |
-| 自动分类 | `aegis start "标题" --level auto` |
-| 看所有需求 | `aegis status` |
-| 看一个需求 | `aegis status REQ-001` |
-| 看 JSON 状态 | `aegis status --json` |
-| 检查当前阶段 | `aegis check` |
-| 检查指定需求 | `aegis check REQ-001` |
-| 推进到下一阶段 | `aegis advance` |
-| 强制推进 | `aegis advance -f` |
-| 写 DevLog | `aegis devlog write REQ-001 -m "内容"` |
-| 看 DevLog | `aegis devlog show` |
-| 预处理消息 | `aegis preprocess "帮我修bug"` |
-
-## 配合 AI 使用
-
-在 Hana 中开发时，流程是：
-
-1. 你在对话框说需求
-2. AI 收到后调用 `aegis preprocess` 获取增强 prompt
-3. AI 调用 `aegis start` 登记需求
-4. AI 写设计文档，调用 `aegis check` 验证
-5. 你确认后，AI 调用 `aegis advance` 推进
-6. AI 写代码，调用 `aegis devlog` 记录
-7. AI 调用 `aegis advance` 完成
-8. `git commit` 时 pre-commit hook 自动验证合规性
-
-## 安装 pre-commit hook（可选但推荐）
+### 我想用 JSON 看状态（给脚本用）
 
 ```bash
-# 在你的项目目录下
-pip install pre-commit
-cat > .pre-commit-config.yaml << 'EOF'
+aegis status --json
+```
+
+### 我想在 git commit 时自动检查
+
+在你的项目目录下创建 `.pre-commit-config.yaml`：
+
+```yaml
 repos:
   - repo: local
     hooks:
-      - id: aegis-check
-        name: Aegis Compliance Check
+      - id: aegis
+        name: Aegis Check
         entry: python -m aegis_toolchain.hooks.pre_commit
         language: system
         pass_filenames: false
         always_run: true
-EOF
+```
+
+然后运行：
+
+```bash
+pip install pre-commit
 pre-commit install
 ```
 
-之后每次 `git commit` 都会自动检查 Aegis 合规性。不通过会阻断提交。
+之后每次 `git commit` 都会自动检查。不通过会阻断提交。
 
-## 故障排除
+### 我还没装，怎么装
 
-| 问题 | 解决 |
-|------|------|
-| `aegis: command not found` | 确认 `pip install -e .` 成功，检查 Python Scripts 目录在 PATH 中 |
-| `state.json 被破坏` | 删除 `Aegis/state/state.json`，重新 `aegis start` |
-| `filelock 超时` | 可能有另一个 aegis 进程在运行，等待 5 秒或关闭其他终端 |
-| check 总是失败 | 确认 `Aegis_Specs/INDEX.md` 存在且表格格式正确 |
+```bash
+git clone https://github.com/Szy-Fxy/Aegis.git aegis-toolchain
+cd aegis-toolchain
+pip install -e .
+aegis --help    # 验证安装
+```
+
+或者用一键脚本：
+- Windows: 右键运行 `install.ps1`
+- Mac/Linux: `bash install.sh`
+
+### 出问题了怎么办
+
+| 问题 | 试试这个 |
+|------|---------|
+| `aegis: command not found` | 重启终端。如果还不行，运行 `pip install -e .` 再试 |
+| state.json 报错 | 删掉 `Aegis/state/state.json`，重新 `aegis start` |
+| 一直卡住不动 | 可能另一个 aegis 在运行，关掉其他终端窗口 |
+| 中文乱码 | PowerShell 用户：输入 `chcp 65001` 然后回车 |

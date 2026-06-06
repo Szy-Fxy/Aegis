@@ -93,6 +93,8 @@ def _copy_dir(data_root, rel_src: str, dst: Path) -> None:
     dst.mkdir(parents=True, exist_ok=True)
 
     for item in src.iterdir():
+        if item.name == "__pycache__":
+            continue
         target_item = dst / item.name
         if item.is_dir():
             _copy_dir(src, item.name, target_item)

@@ -43,6 +43,9 @@ pip install -e .
 ## 快速开始
 
 ```bash
+# 0. 初始化项目（仅第一次）
+aegis init
+
 # 1. 开始一个需求
 aegis start "鱼转向运动优化" --level L2
 

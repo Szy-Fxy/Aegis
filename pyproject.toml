@@ -52,6 +52,10 @@ dev = [
 
 [tool.poetry]
 packages = [{include = "aegis_toolchain", from = "src"}]
+include = [
+    "src/aegis_toolchain/data/**/*.md",
+    "src/aegis_toolchain/data/**/*.json",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

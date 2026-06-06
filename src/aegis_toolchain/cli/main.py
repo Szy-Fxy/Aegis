@@ -23,12 +23,14 @@ from aegis_toolchain.cli.check import cmd_check
 from aegis_toolchain.cli.advance import cmd_advance
 from aegis_toolchain.cli.status import cmd_status
 from aegis_toolchain.cli.preprocess_cmd import cmd_preprocess
+from aegis_toolchain.cli.init_cmd import init_project
 
 app.command(name="start", help="开始一个新需求")(cmd_start)
 app.command(name="check", help="执行 BOUNDARY CHECK")(cmd_check)
 app.command(name="advance", help="推进到下一阶段")(cmd_advance)
 app.command(name="status", help="查看项目状态")(cmd_status)
 app.command(name="preprocess", help="消息预处理器")(cmd_preprocess)
+app.command(name="init", help="初始化项目 Aegis 规则文件")(init_project)
 
 # ── 多命令组：add_typer ──────────────────
 from aegis_toolchain.cli.devlog import app as devlog_app

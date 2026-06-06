@@ -36,16 +36,15 @@ def cmd_start(
 
     req_level = RequirementLevel(level_upper)
 
-    # 3. 分配 ID 并创建需求
+    # 3. 创建需求（ID 由 StateManager 自动分配）
     try:
         manager = StateManager(project)
-        next_id = manager.get_next_id()
     except Exception as e:
         typer.secho(f"❌ 状态文件异常: {e}", fg="red")
         raise typer.Exit(1)
 
     req = Requirement(
-        id=next_id,
+        id=manager.get_next_id(),
         title=title,
         level=req_level,
         description=description,
@@ -53,7 +52,6 @@ def cmd_start(
 
     # 4. 注册到 state.json
     try:
-        manager = StateManager(project)
         req = manager.add_requirement(req)
     except RuntimeError as e:
         typer.secho(f"❌ {e}", fg="red")

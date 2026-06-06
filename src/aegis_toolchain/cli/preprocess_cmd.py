@@ -27,8 +27,10 @@ def cmd_preprocess(
     state = None
     try:
         state = StateManager(project).load()
-    except Exception:
-        pass
+    except Exception as e:
+        from loguru import logger
+        logger.debug(f"preprocess: 无法加载项目状态 ({e})")
+        typer.secho(f"⚠️ 无法加载项目状态（非致命）", fg="yellow")
 
     prompt = build_system_prompt(classification, rules, state)
     typer.secho("=" * 60, fg="cyan")

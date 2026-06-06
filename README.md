@@ -25,17 +25,15 @@ Aegis AI 开发治理系统的外挂工具链。解决纯 SKILL.md 方案的三�
 
 ## 安装
 
-**前提条件**: Python ≥ 3.11, Git ≥ 2.30, Poetry
+**前提条件**: Python ≥ 3.11, Git ≥ 2.30
 
 ```bash
 git clone https://github.com/Szy-Fxy/Aegis.git aegis-toolchain
 cd aegis-toolchain
 pip install -e .
-
-# 在 Aegis 项目中安装 Git Hook（可选）
-cd /path/to/your-aegis-project
-pre-commit install
 ```
+
+> 📘 **详细使用指南**: [USAGE.md](USAGE.md) — 从零开始的逐步教程
 
 ## 快速开始
 

@@ -10,8 +10,23 @@ readme = "README.md"
 license = "MIT"
 requires-python = ">=3.11"
 authors = [
-    {name = "Aegis Team"},
+    {name = "Aegis Team", email = "aegis@example.com"},
 ]
+
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+keywords = ["aegis", "ai", "workflow", "cli", "governance"]
+
+[project.urls]
+Homepage = "https://github.com/Szy-Fxy/Aegis"
+Repository = "https://github.com/Szy-Fxy/Aegis"
 
 dependencies = [
     "typer>=0.12,<1.0",

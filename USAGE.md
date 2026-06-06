@@ -3,7 +3,7 @@
 ## 安装（用户只需这两步）
 
  ```bash
-pip install git+https://github.com/Szy-Fxy/Aegis.git@v5.0.0
+pip install git+https://github.com/Szy-Fxy/Aegis.git
 cd 我的游戏项目
 aegis init
 ```

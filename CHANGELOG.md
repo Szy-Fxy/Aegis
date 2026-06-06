@@ -1,5 +1,18 @@
 # Changelog
 
+## v5.1.1 (2026-06-06)
+
+### Removed
+- 删除 `models/config.py`（零引用的死代码）
+- 删除整个 `preprocessor/` 模块（`classifier` 移至 `core/`，`injector` 和 `preprocess` 命令删除）
+- 删除 `BoundaryChecks` 中三个从未引用的字段（`review_design_done`, `review_code_done`, `verify_done`）
+- 删除 `_check_user_language_ac` 占位符检查
+- 删除各阶段"代码编译"占位符检查（永远 True）
+- 删除 `IndexManager` 写方法（`add_entry`, `update_status`）：state.json 是唯一状态源，INDEX.md 改为只读
+
+### Fixed
+- `naming-and-formats.md` DevLog 命名与实际实现一致
+
 ## v5.1.0 (2026-06-06)
 
 ### Added

@@ -1,4 +1,7 @@
-"""INDEX.md 表格的结构化读写"""
+"""INDEX.md 表格的结构化读写。
+
+state.json 是权威状态源。INDEX.md 作为人类可读视图，从 state 生成写入。
+"""
 
 import re
 from datetime import datetime
@@ -9,7 +12,7 @@ from loguru import logger
 
 
 class IndexManager:
-    """INDEX.md 的管理器，提供结构化增删改查"""
+    """INDEX.md 的管理器，提供只读查询和从 state 同步写入"""
 
     def __init__(self, project_path: Path) -> None:
         self.path = project_path / "Aegis_Specs" / "INDEX.md"
@@ -37,7 +40,7 @@ class IndexManager:
         return entries
 
     def add_entry(self, req_id: str, title: str, level: str, status: str) -> None:
-        """在 INDEX.md 表格末尾新增一行"""
+        """在 INDEX.md 表格末尾新增一行（从 state.json 同步写入）"""
         today = datetime.now().strftime("%Y-%m-%d")
         safe_title = title.replace("|", "/").replace("\n", " ").replace("\r", "")
 
@@ -46,8 +49,6 @@ class IndexManager:
             return
 
         content = self.path.read_text(encoding="utf-8")
-
-        # 找到表格最后一行数据，在后面插入
         lines = content.split("\n")
         insert_idx = -1
         for i in range(len(lines) - 1, -1, -1):
@@ -56,7 +57,6 @@ class IndexManager:
                 break
 
         if insert_idx == -1:
-            # 表格为空，在表头后插入
             for i, line in enumerate(lines):
                 if "|---" in line:
                     insert_idx = i + 1
@@ -72,7 +72,7 @@ class IndexManager:
         logger.info(f"INDEX.md: 新增 {req_id} — {safe_title}")
 
     def update_status(self, req_id: str, status: str) -> None:
-        """更新指定需求的状态列和最后活动日期"""
+        """更新指定需求的状态列（从 state.json 同步写入）"""
         if not self.path.exists():
             logger.warning(f"INDEX.md 不存在，无法更新 {req_id}")
             return
@@ -80,7 +80,6 @@ class IndexManager:
         content = self.path.read_text(encoding="utf-8")
         today = datetime.now().strftime("%Y-%m-%d")
 
-        # 匹配并替换状态列（第4列）和最后活动列（第6列）
         pattern = rf"(\|\s*{re.escape(req_id)}\s*\|.+?\|\s*L[123]\s*\|)\s*\S+(?:\s+\S+)*?(\s*\|\s*\d{{4}}-\d{{2}}-\d{{2}}\s*\|)\s*(\d{{4}}-\d{{2}}-\d{{2}})"
         replacement = rf"\1 {status} \2 {today}"
 
@@ -97,14 +96,6 @@ class IndexManager:
         for entry in entries:
             if entry["id"] == req_id:
                 return entry
-        return None
-
-    def get_implementing_id(self) -> Optional[str]:
-        """返回当前 implementing 的需求 ID"""
-        entries = self.read_all()
-        for entry in entries:
-            if "implementing" in entry["status"].lower():
-                return entry["id"]
         return None
 
     def _create_new(self, title: str, req_id: str, level: str, status: str, date: str) -> None:
@@ -146,3 +137,11 @@ class IndexManager:
 """
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self.path.write_text(template, encoding="utf-8")
+
+    def get_implementing_id(self) -> Optional[str]:
+        """返回当前 implementing 的需求 ID"""
+        entries = self.read_all()
+        for entry in entries:
+            if "implementing" in entry["status"].lower():
+                return entry["id"]
+        return None

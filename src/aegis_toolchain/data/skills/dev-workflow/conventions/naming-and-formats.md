@@ -10,8 +10,10 @@
 ### 文件命名
 
 ```
-Aegis/rules/DevLogs/{项目名}_P{两位数字}_{功能描述}_{YYYY-MM-DD}.md
+Aegis/rules/DevLogs/{YYYY-MM-DD}-{REQ-编号}-{需求名}.md
 ```
+
+示例: `2026-06-06-REQ-001-炮台系统.md`
 
 示例：
 - `My_Fish_01_P01_ProjectRefactor_2026-05-30.md`

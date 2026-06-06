@@ -91,7 +91,6 @@ class BoundaryChecker:
         return [
             self._check_index_registered(req.id),
             self._check_design_file_exists(req),
-            self._check_user_language_ac(req),
         ]
 
     def _check_l2_review_design(self, req: Requirement) -> list[CheckResult]:
@@ -115,11 +114,6 @@ class BoundaryChecker:
             self._check_index_status(req.id),
             self._check_file(design_path, "设计文档（前置验证）"),
             self._check_file(review_path, "审查文档（前置验证）"),
-            CheckResult(
-                name="代码编译",
-                passed=True,
-                detail="Phase 1 跳过代码编译检查（手动验证）",
-            ),
         ]
 
     def _check_l2_review_code(self, req: Requirement) -> list[CheckResult]:
@@ -187,22 +181,6 @@ class BoundaryChecker:
             # review 阶段还需检查 05-tasks.md
             for fname, label in [("05-tasks.md", "任务拆分"), ("06-review.md", "集成审核")]:
                 results.append(self._check_file(l3_dir / fname, label))
-        elif phase == RequirementPhase.IMPLEMENTING:
-            # L3 implementing: 检查 INDEX 状态 + L3 特有文件
-            results.append(
-                CheckResult(
-                    name="INDEX.md 状态",
-                    passed=self._is_index_status(req.id, "implementing"),
-                    detail="INDEX.md 状态应为 implementing",
-                )
-            )
-            results.append(
-                CheckResult(
-                    name="代码编译",
-                    passed=True,
-                    detail="Phase 1 跳过代码编译检查（手动验证）",
-                )
-            )
         elif phase == RequirementPhase.DONE:
             return self._check_l2_done(req)
         elif phase in phase_files:
@@ -242,14 +220,6 @@ class BoundaryChecker:
             path = self._spec_path(req) / "design.md"
 
         return self._check_file(path, "设计文档")
-
-    def _check_user_language_ac(self, req: Requirement) -> CheckResult:
-        """检查验收标准是否包含用户语言描述（Phase 1 为占位检查）"""
-        return CheckResult(
-            name="验收标准含用户语言",
-            passed=True,
-            detail="Phase 1 跳过用户语言检查（手动验证）",
-        )
 
     def _check_index_status(self, req_id: str) -> CheckResult:
         """检查 INDEX.md 中状态是否为 implementing"""

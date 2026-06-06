@@ -52,12 +52,7 @@ class BoundaryChecks(BaseModel):
     index_registered: bool = False
     design_created: bool = False
     user_approved: bool = False
-    code_compiles: bool = False
     devlog_written: bool = False
-    # L2 新增
-    review_design_done: bool = False
-    review_code_done: bool = False
-    verify_done: bool = False
 
 
 class Requirement(BaseModel):

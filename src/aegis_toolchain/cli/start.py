@@ -8,7 +8,7 @@ from loguru import logger
 from aegis_toolchain.core.state_manager import StateManager
 from aegis_toolchain.core.index_manager import IndexManager
 from aegis_toolchain.models.state import Requirement, RequirementLevel
-from aegis_toolchain.preprocessor.classifier import classify
+from aegis_toolchain.core.classifier import classify
 
 
 def cmd_start(
@@ -60,13 +60,12 @@ def cmd_start(
         typer.secho(f"❌ 状态文件异常: {e}", fg="red")
         raise typer.Exit(1)
 
-    # 5. 更新 INDEX.md
+    # 5. 同步 INDEX.md 视图
     try:
         index = IndexManager(project)
         index.add_entry(req.id, req.title, req_level.value, req.phase.display)
     except Exception as e:
-        logger.warning(f"INDEX.md 更新失败: {e}")
-        typer.secho(f"⚠️ INDEX.md 更新失败（state.json 已保存）: {e}", fg="yellow")
+        logger.warning(f"INDEX.md 同步失败（state.json 已保存）: {e}")
 
     # 6. 输出结果
     typer.secho(f"\n✅ 已登记 {req.id} [{req.level.value}] {req.title}", fg="green", bold=True)

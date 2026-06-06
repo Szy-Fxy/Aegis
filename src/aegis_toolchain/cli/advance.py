@@ -109,13 +109,14 @@ def cmd_advance(
 
     manager.update_requirement(req.id, phase=next_phase)
 
-    # 同步更新 INDEX.md
+    # 同步 INDEX.md 视图
     status = PHASE_INDEX_STATUS.get(next_phase, next_phase.value)
     try:
         idx = IndexManager(project)
         idx.update_status(req.id, status)
     except Exception:
-        pass  # INDEX.md 不存在时不阻塞
+        pass
+
     next_display = PHASE_DISPLAY.get(next_phase, next_phase.value)
     typer.secho(f"✅ {req.id} {req.title}: {old_phase.value} → {next_display}", fg="green")
 

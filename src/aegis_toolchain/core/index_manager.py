@@ -39,7 +39,7 @@ class IndexManager:
     def add_entry(self, req_id: str, title: str, level: str, status: str) -> None:
         """在 INDEX.md 表格末尾新增一行"""
         today = datetime.now().strftime("%Y-%m-%d")
-        safe_title = title.replace("|", "/").replace("\n", " ")
+        safe_title = title.replace("|", "/").replace("\n", " ").replace("\r", "")
 
         if not self.path.exists():
             self._create_new(safe_title, req_id, level, status, today)

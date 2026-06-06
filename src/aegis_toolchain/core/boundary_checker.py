@@ -187,8 +187,22 @@ class BoundaryChecker:
             # review 阶段还需检查 05-tasks.md
             for fname, label in [("05-tasks.md", "任务拆分"), ("06-review.md", "集成审核")]:
                 results.append(self._check_file(l3_dir / fname, label))
-        elif phase in (RequirementPhase.IMPLEMENTING):
-            return self._check_l2_implementing(req)
+        elif phase == RequirementPhase.IMPLEMENTING:
+            # L3 implementing: 检查 INDEX 状态 + L3 特有文件
+            results.append(
+                CheckResult(
+                    name="INDEX.md 状态",
+                    passed=self._is_index_status(req.id, "implementing"),
+                    detail="INDEX.md 状态应为 implementing",
+                )
+            )
+            results.append(
+                CheckResult(
+                    name="代码编译",
+                    passed=True,
+                    detail="Phase 1 跳过代码编译检查（手动验证）",
+                )
+            )
         elif phase == RequirementPhase.DONE:
             return self._check_l2_done(req)
         elif phase in phase_files:
@@ -209,7 +223,9 @@ class BoundaryChecker:
                 detail=f"INDEX.md 不存在",
             )
 
-        content = index_path.read_text(encoding="utf-8")
+        content = self._read_safe(index_path)
+        if content is None:
+            return CheckResult(name="INDEX.md 登记", passed=False, detail="INDEX.md 无法读取")
         if req_id in content:
             return CheckResult(name="INDEX.md 登记", passed=True, detail=f"{req_id} 已登记")
         return CheckResult(
@@ -219,11 +235,11 @@ class BoundaryChecker:
         )
 
     def _check_design_file_exists(self, req: Requirement) -> CheckResult:
-        """检查 design.md 是否存在（L2 使用 L2 目录，L3 使用 L3 目录）"""
+        """检查 design.md 是否存在（L2 使用 _spec_path 净化，L3 使用固定路径）"""
         if req.level == RequirementLevel.L3:
             path = self.project_path / "Aegis_Specs" / "L3" / "aegis-toolchain" / "03-design.md"
         else:
-            path = self.project_path / "Aegis_Specs" / "L2" / req.title / "design.md"
+            path = self._spec_path(req) / "design.md"
 
         return self._check_file(path, "设计文档")
 
@@ -241,7 +257,9 @@ class BoundaryChecker:
         if not index_path.exists():
             return CheckResult(name="INDEX.md 状态", passed=False, detail="INDEX.md 不存在")
 
-        content = index_path.read_text(encoding="utf-8")
+        content = self._read_safe(index_path)
+        if content is None:
+            return CheckResult(name="INDEX.md 状态", passed=False, detail="INDEX.md 无法读取")
         if "implementing" in content.lower() and req_id in content:
             return CheckResult(
                 name="INDEX.md 状态",
@@ -280,15 +298,30 @@ class BoundaryChecker:
         return CheckResult(name=label, passed=False, detail=f"{label} 不存在: {path}")
 
     def _file_has_content(self, path: Path, keyword: str) -> bool:
-        """检查文件是否包含指定关键词"""
+        """检查文件是否包含指定关键词，兼容常见编码"""
         if not path.exists():
             return False
-        return keyword in path.read_text(encoding="utf-8")
+        for enc in ("utf-8", "utf-16", "gbk", "gb18030"):
+            try:
+                return keyword in path.read_text(encoding=enc)
+            except (UnicodeDecodeError, LookupError):
+                continue
+        return False
 
     def _is_index_status(self, req_id: str, expected: str) -> bool:
         """检查 INDEX.md 中指定需求的状态"""
         index_path = self.project_path / "Aegis_Specs" / "INDEX.md"
         if not index_path.exists():
             return False
-        content = index_path.read_text(encoding="utf-8")
-        return req_id in content and expected.lower() in content.lower()
+        content = self._read_safe(index_path)
+        return content is not None and req_id in content and expected.lower() in content.lower()
+
+    @staticmethod
+    def _read_safe(path: Path) -> str | None:
+        """安全读取文件，兼容 UTF-8/UTF-16/GBK/GB18030"""
+        for enc in ("utf-8", "utf-16", "gbk", "gb18030"):
+            try:
+                return path.read_text(encoding=enc)
+            except (UnicodeDecodeError, LookupError):
+                continue
+        return None

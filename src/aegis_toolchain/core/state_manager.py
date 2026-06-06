@@ -26,8 +26,8 @@ class StateCorruptedError(Exception):
 class StateManager:
     """state.json 管理器，提供线程/进程安全的 CRUD 操作"""
 
-    LOCK_TIMEOUT = 5  # 秒
-    SAVE_RETRIES = 3  # save 失败重试次数
+    LOCK_TIMEOUT = 2  # 秒（每次拿锁等待时间）
+    SAVE_RETRIES = 5  # save 失败重试次数
 
     def __init__(self, project_path: Path) -> None:
         self.project_path = project_path

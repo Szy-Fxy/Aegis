@@ -34,7 +34,7 @@ def cmd_check(
     report = checker.check(req)
 
     typer.secho(f"\n{'='*50}", fg="cyan")
-    typer.secho(f"  BOUNDARY CHECK: {req.id} [{req.level.value}] {req.phase.value}", fg="cyan")
+    typer.secho(f"  BOUNDARY CHECK: {req.id} [{req.level.value}] {req.phase.display}", fg="cyan")
     typer.secho(f"{'='*50}\n", fg="cyan")
 
     for r in report.results:

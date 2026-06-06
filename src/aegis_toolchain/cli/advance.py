@@ -52,6 +52,7 @@ PHASE_DISPLAY = {p: p.display for p in RequirementPhase}
 def cmd_advance(
     requirement_id: str = typer.Argument(None, help="需求 ID，默认当前活跃需求"),
     force: bool = typer.Option(False, "--force", "-f", help="跳过 BOUNDARY CHECK 强制推进"),
+    yes: bool = typer.Option(False, "--yes", "-y", help="跳过确认提示（CI/CD 使用）"),
     project: Path = typer.Option(Path("."), "--project", "-p", help="项目路径"),
 ) -> None:
     """推进需求到下一阶段"""
@@ -82,10 +83,15 @@ def cmd_advance(
             raise typer.Exit(1)
         typer.secho(f"✅ BOUNDARY CHECK 全部通过 ({report.total_count}/{report.total_count})", fg="green")
     else:
-        confirm = typer.confirm(f"⚠️  跳过 BOUNDARY CHECK 强制推进 {req.id}？")
-        if not confirm:
-            typer.secho("已取消", fg="yellow")
-            raise typer.Exit(0)
+        if not yes:
+            try:
+                confirm = typer.confirm(f"⚠️  跳过 BOUNDARY CHECK 强制推进 {req.id}？")
+                if not confirm:
+                    typer.secho("已取消", fg="yellow")
+                    raise typer.Exit(0)
+            except typer.Abort:
+                typer.secho("❌ 非交互模式请加 --yes 跳过确认", fg="red")
+                raise typer.Exit(1)
         logger.warning(f"FORCE ADVANCE: {req.id} {req.phase.value} → (跳过检查)")
         typer.secho("⚠️  --force: 跳过 BOUNDARY CHECK，强制推进", fg="yellow")
 

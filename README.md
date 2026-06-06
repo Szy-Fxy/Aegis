@@ -24,7 +24,7 @@ Aegis AI 开发治理系统的外挂工具链。解决纯 SKILL.md 方案的三�
 | 无 Git 层兜底 | pre-commit hook 阻断不合规提交 |
 
 ## 安装
-
+详细指南：https://github.com/Szy-Fxy/Aegis/blob/main/USAGE.md
 ```bash
 pip install git+https://github.com/Szy-Fxy/Aegis.git
 ```

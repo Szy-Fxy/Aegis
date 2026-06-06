@@ -17,9 +17,12 @@ class RequirementPhase(str, Enum):
     BRAINSTORM = "brainstorm"
     PROPOSAL = "proposal"
     DESIGN = "design"
+    REVIEW_DESIGN = "review_design"
     SPEC = "spec"
     REVIEW = "review"
     IMPLEMENTING = "implementing"
+    REVIEW_CODE = "review_code"
+    VERIFY = "verify"
     DONE = "done"
     PAUSED = "paused"
     CANCELLED = "cancelled"
@@ -32,6 +35,10 @@ class BoundaryChecks(BaseModel):
     user_approved: bool = False
     code_compiles: bool = False
     devlog_written: bool = False
+    # L2 新增
+    review_design_done: bool = False
+    review_code_done: bool = False
+    verify_done: bool = False
 
 
 class Requirement(BaseModel):
@@ -49,14 +56,11 @@ class Requirement(BaseModel):
     @field_validator("phase")
     @classmethod
     def validate_level_phase_match(cls, v, info):
-        """L1 不应有 brainstorm/proposal/design/spec/review 阶段"""
+        """L1 只允许 implementing / done"""
         level = info.data.get("level")
-        if level == RequirementLevel.L1 and v in (
-            RequirementPhase.BRAINSTORM,
-            RequirementPhase.PROPOSAL,
-            RequirementPhase.DESIGN,
-            RequirementPhase.SPEC,
-            RequirementPhase.REVIEW,
+        if level == RequirementLevel.L1 and v not in (
+            RequirementPhase.IMPLEMENTING,
+            RequirementPhase.DONE,
         ):
             raise ValueError(f"L1 需求不应处于 {v.value} 阶段，L1 只有 implementing 和 done")
         return v

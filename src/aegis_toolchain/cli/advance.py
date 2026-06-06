@@ -10,8 +10,11 @@ from aegis_toolchain.core.index_manager import IndexManager
 from aegis_toolchain.models.state import RequirementPhase
 
 PHASE_NEXT_L2: dict[RequirementPhase, RequirementPhase] = {
-    RequirementPhase.DESIGN: RequirementPhase.IMPLEMENTING,
-    RequirementPhase.IMPLEMENTING: RequirementPhase.DONE,
+    RequirementPhase.DESIGN: RequirementPhase.REVIEW_DESIGN,
+    RequirementPhase.REVIEW_DESIGN: RequirementPhase.IMPLEMENTING,
+    RequirementPhase.IMPLEMENTING: RequirementPhase.REVIEW_CODE,
+    RequirementPhase.REVIEW_CODE: RequirementPhase.VERIFY,
+    RequirementPhase.VERIFY: RequirementPhase.DONE,
 }
 
 PHASE_NEXT_L3: dict[RequirementPhase, RequirementPhase] = {
@@ -27,9 +30,12 @@ PHASE_INDEX_STATUS: dict[RequirementPhase, str] = {
     RequirementPhase.BRAINSTORM: "📋 brainstorm",
     RequirementPhase.PROPOSAL: "📋 proposal",
     RequirementPhase.DESIGN: "📐 design",
+    RequirementPhase.REVIEW_DESIGN: "📋 review_design",
     RequirementPhase.SPEC: "📝 spec",
     RequirementPhase.REVIEW: "📋 review",
     RequirementPhase.IMPLEMENTING: "🔨 implementing",
+    RequirementPhase.REVIEW_CODE: "📋 review_code",
+    RequirementPhase.VERIFY: "✅ verify",
     RequirementPhase.DONE: "✅ done",
 }
 
@@ -46,9 +52,12 @@ PHASE_DISPLAY = {
     RequirementPhase.BRAINSTORM: "📋 brainstorm",
     RequirementPhase.PROPOSAL: "📋 proposal",
     RequirementPhase.DESIGN: "📐 design",
+    RequirementPhase.REVIEW_DESIGN: "📋 review_design",
     RequirementPhase.SPEC: "📝 spec",
     RequirementPhase.REVIEW: "📋 review",
     RequirementPhase.IMPLEMENTING: "🔨 implementing",
+    RequirementPhase.REVIEW_CODE: "📋 review_code",
+    RequirementPhase.VERIFY: "✅ verify",
     RequirementPhase.DONE: "✅ done",
     RequirementPhase.PAUSED: "⏸️ paused",
     RequirementPhase.CANCELLED: "❌ cancelled",

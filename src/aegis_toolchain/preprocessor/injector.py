@@ -5,13 +5,15 @@ from aegis_toolchain.preprocessor.classifier import ClassificationResult
 
 L1_FLOW = (
     "登记 INDEX.md (🔨 implementing) → 改代码 → "
-    "展示改动摘要 → 等用户确认 → DevLog → INDEX.md (✅ done)"
+    "调用 code-reviewer + devils-advocate 审查 → "
+    "展示审查结果 + 改动摘要 → 等用户确认 → DevLog → INDEX.md (✅ done)"
 )
 
 L2_FLOW = (
     "登记 INDEX.md (📐 design) → 创建设计文档 → 等用户确认 → "
-    "INDEX.md (🔨 implementing) → 写代码 → BOUNDARY CHECK → "
-    "INDEX.md (✅ done) → DevLog"
+    "设计审查 (📋 review_design, 4子代理) → INDEX.md (🔨 implementing) → 写代码 → "
+    "代码审查 (📋 review_code, 4子代理) → 验收 (✅ verify) → "
+    "等用户确认 → INDEX.md (✅ done) → DevLog"
 )
 
 L3_FLOW = (

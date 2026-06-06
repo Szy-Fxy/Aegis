@@ -75,8 +75,14 @@ class BoundaryChecker:
     def _check_l2(self, req: Requirement) -> list[CheckResult]:
         if req.phase == RequirementPhase.DESIGN:
             return self._check_l2_design(req)
+        elif req.phase == RequirementPhase.REVIEW_DESIGN:
+            return self._check_l2_review_design(req)
         elif req.phase == RequirementPhase.IMPLEMENTING:
             return self._check_l2_implementing(req)
+        elif req.phase == RequirementPhase.REVIEW_CODE:
+            return self._check_l2_review_code(req)
+        elif req.phase == RequirementPhase.VERIFY:
+            return self._check_l2_verify(req)
         elif req.phase == RequirementPhase.DONE:
             return self._check_l2_done(req)
         return []
@@ -88,15 +94,45 @@ class BoundaryChecker:
             self._check_user_language_ac(req),
         ]
 
+    def _check_l2_review_design(self, req: Requirement) -> list[CheckResult]:
+        review_path = self._review_path(req)
+        return [
+            self._check_index_registered(req.id),
+            self._check_file(review_path, "审查文档"),
+            CheckResult(
+                name="设计审查",
+                passed=self._file_has_content(review_path, "设计审查"),
+                detail="review.md 需包含设计审查记录",
+            ),
+        ]
+
     def _check_l2_implementing(self, req: Requirement) -> list[CheckResult]:
         return [
             self._check_index_status(req.id),
-            # Phase 1 不做代码编译检查，留空
             CheckResult(
                 name="代码编译",
                 passed=True,
                 detail="Phase 1 跳过代码编译检查（手动验证）",
             ),
+        ]
+
+    def _check_l2_review_code(self, req: Requirement) -> list[CheckResult]:
+        review_path = self._review_path(req)
+        return [
+            self._check_index_status(req.id),
+            self._check_file(review_path, "审查文档"),
+            CheckResult(
+                name="代码审查",
+                passed=self._file_has_content(review_path, "代码审查"),
+                detail="review.md 需包含代码审查记录",
+            ),
+        ]
+
+    def _check_l2_verify(self, req: Requirement) -> list[CheckResult]:
+        verify_path = self._spec_path(req) / "verify.md"
+        return [
+            self._check_index_registered(req.id),
+            self._check_file(verify_path, "验收报告"),
         ]
 
     def _check_l2_done(self, req: Requirement) -> list[CheckResult]:
@@ -108,6 +144,17 @@ class BoundaryChecker:
             ),
             self._check_devlog_exists(req.id),
         ]
+
+    # ── 辅助路径 ───────────────────────────
+
+    def _spec_path(self, req: Requirement) -> Path:
+        """根据需求等级返回 spec 目录路径"""
+        if req.level == RequirementLevel.L3:
+            return self.project_path / "Aegis_Specs" / "L3" / req.title
+        return self.project_path / "Aegis_Specs" / "L2" / req.title
+
+    def _review_path(self, req: Requirement) -> Path:
+        return self._spec_path(req) / "review.md"
 
     # ── L3 ─────────────────────────────────────
 
@@ -218,6 +265,12 @@ class BoundaryChecker:
         if path.exists():
             return CheckResult(name=label, passed=True, detail=f"{label} 已创建: {path.name}")
         return CheckResult(name=label, passed=False, detail=f"{label} 不存在: {path}")
+
+    def _file_has_content(self, path: Path, keyword: str) -> bool:
+        """检查文件是否包含指定关键词"""
+        if not path.exists():
+            return False
+        return keyword in path.read_text(encoding="utf-8")
 
     def _is_index_status(self, req_id: str, expected: str) -> bool:
         """检查 INDEX.md 中指定需求的状态"""

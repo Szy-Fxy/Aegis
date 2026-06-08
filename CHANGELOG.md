@@ -3,8 +3,8 @@
 ## v5.2.1 (2026-06-08) — 完善入口与升级
 
 - `aegis upgrade` 命令：升级后同步项目规则文件，备份旧版，保留用户数据
-- INDEX.md 路径固定为 `Aegis_Specs/INDEX.md`（aegis-boot + dev-workflow SKILL.md）
-- README 添加提需求提醒
+- aegis-boot SKILL.md 所有命令改为 `python -m aegis_toolchain`，AI 可正确调用
+- README 重写：所有命令改为 `python -m aegis_toolchain`，解决 PATH 问题
 - USAGE.md 补充本地安装路径和升级说明
 - AGENTS.md、KNOWN_ISSUES.md 首次纳入仓库
 

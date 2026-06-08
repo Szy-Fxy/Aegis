@@ -121,7 +121,7 @@ def init_project(
         typer.secho(f"     协作入口文件      AGENTS.md", fg="blue")
     typer.secho(f"     需求追踪          Aegis_Specs/", fg="blue")
     typer.secho(f"\n  >> 下一步:", fg="blue")
-    typer.secho(f"     aegis start \"需求标题\" -l L2", fg="blue")
+    typer.secho(f"     python -m aegis_toolchain start \"需求标题\" -l L2", fg="blue")
     typer.secho(f"\n  >> 使用指南: https://github.com/Szy-Fxy/Aegis/blob/main/USAGE.md", fg="blue")
 
 

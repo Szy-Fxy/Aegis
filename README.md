@@ -1,15 +1,6 @@
-# Aegis Toolchain
+# Aegis Toolchain v5.2.1
 
-> 🛠️ Aegis AI 开发治理工具链 v5.2.1<br>
-> 让 AI 辅助开发的流程从「自律」转向「工具强制」
-
-> 💡 **初次对话前请先`aegis start`，别手写 INDEX.md。登记、推进、记录自动化。**
-=======
-> 💡 **由于当前第一阶段的局限性，对话轮数过长或上下文太多时，每提一个需求前加一句 'aegis'**
-## 前置条件
-
-- Python 3.11+
-- Git
+> AI 开发治理工具链。从需求登记到验收，全流程自动化。
 
 ## 安装
 
@@ -17,45 +8,47 @@
 pip install git+https://github.com/Szy-Fxy/Aegis.git
 ```
 
-Windows 用户注意：安装后如果 `aegis` 命令找不到，需要把 `%USERPROFILE%\AppData\Roaming\Python\Python3XX\Scripts` 加到 PATH。详见 [USAGE.md](USAGE.md)。
+## 怎么用（最重要）
+
+安装后不用管 PATH，直接 `python -m aegis_toolchain` 就能用：
+
+```powershell
+cd 你的项目
+python -m aegis_toolchain init          # 初始化规则文件
+python -m aegis_toolchain start "需求" -l L2  # 登记需求（自动判定 L1/L2/L3）
+python -m aegis_toolchain status         # 查看进度
+python -m aegis_toolchain check          # BOUNDARY CHECK
+python -m aegis_toolchain advance         # 推进到下一阶段
+```
+
+写一个需求的完整流程：**init → start → check → advance → devlog → done**
+
+## 东西都在哪
+
+| 你关心的 | 位置 | 作用 |
+|---------|------|------|
+| CLI | `python -m aegis_toolchain` | 7 个命令：init/start/check/advance/status/upgrade/devlog |
+| 分类器（自动判定 L1/L2/L3） | 内嵌在 `aegis start` 里，不需要手动调 | 根据修改范围自动分类 |
+| state.json | `项目/Aegis/state/state.json` | 记录需求 ID、阶段、时间。断点续做的基础 |
+| 规则文件 | `项目/Aegis/rules/` + `Aegis/skills/` | 系统自动读取，不需要人管 |
+| AGENTS.md | 项目根目录 | 给 AI 看的入口文件 |
+
+## AI 怎么跟这个工具配合
+
+AI 进入项目后读到 `AGENTS.md` → 加载 `Aegis/skills/aegis-boot/SKILL.md` → 按要求走流程：分类需求 → `aegis start` 登记 → `aegis check` 检查 → `aegis advance` 推进 → `aegis devlog` 记录。
 
 ## 命令速查
 
 | 命令 | 作用 |
 |------|------|
-| `aegis init` | 初始化项目 Aegis 规则 |
-| `aegis start "<标题>" -l L2` | 开始一个新需求 |
-| `aegis check` | 执行 BOUNDARY CHECK |
-| `aegis advance` | 推进到下一阶段 |
-| `aegis status` | 查看项目状态 |
-| `aegis devlog write REQ-001 -m "..."` | 写开发日志 |
-
-## 需求分级
-
-| 级别 | 说明 | 阶段数 | 示例 |
-|:---:|------|:---:|------|
-| L1 | 小修复 | 1 阶段 | 改配置、修 typo |
-| L2 | 功能/模块 | 5 阶段 | 加背包系统 |
-| L3 | 架构改造 | 7 阶段 | 重写渲染管线 |
-
-## 路线图
-
-| Phase   | 内容                                      | 状态       |
-| ------- | --------------------------------------- | -------- |
-| Phase 1 | CLI + state.json + pre-commit hook + 测试 | ✅ v5.2.1 |
-| Phase 2 | MCP Server + YAML 状态机                   | 📋 规划中   |
-| Phase 3 | 全 MCP 生态                                | 💡 设想    |
-
-## 开发
-
-```powershell
-python -m pytest tests/ -q
-```
-
-## 已知问题
-
-[KNOWN_ISSUES.md](KNOWN_ISSUES.md)
+| `python -m aegis_toolchain init` | 初始化项目 |
+| `python -m aegis_toolchain start "标题" -l L2` | 登记需求 |
+| `python -m aegis_toolchain check` | BOUNDARY CHECK |
+| `python -m aegis_toolchain advance` | 推进阶段 |
+| `python -m aegis_toolchain status` | 查看状态 |
+| `python -m aegis_toolchain upgrade` | 升级后同步规则 |
+| `python -m aegis_toolchain devlog write REQ-001 -m "日志"` | 写 DevLog |
 
 ## 许可证
 
-MIT — 详见 [LICENSE](LICENSE)
+MIT

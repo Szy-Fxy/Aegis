@@ -52,7 +52,7 @@ def cmd_advance(
     if requirement_id is None:
         if not state.active_requirements:
             typer.secho("❌ 没有活跃需求", fg="red")
-            typer.secho("   提示: 运行 'aegis start \"<标题>\"' 开始一个新需求", fg="yellow")
+            typer.secho("   提示: 运行 'python -m aegis_toolchain start \"<标题>\"' 开始一个新需求", fg="yellow")
             raise typer.Exit(1)
         req = state.active_requirements[0]
     else:

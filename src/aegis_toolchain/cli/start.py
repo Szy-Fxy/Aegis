@@ -67,9 +67,9 @@ def cmd_start(
     # 6. 输出结果
     typer.secho(f"\n✅ 已登记 {req.id} [{req.level.value}] {req.title}", fg="green", bold=True)
     typer.secho(f"   阶段: {req.phase.display}", fg="green")
-    typer.secho(f"   下一步: aegis check", fg="blue")
+    typer.secho(f"   下一步: python -m aegis_toolchain check", fg="blue")
 
     # 首次使用提示
     rules_dir = project / "Aegis" / "rules"
     if not rules_dir.exists():
-        typer.secho(f"\n💡 建议运行 'aegis init' 安装规则文件（全局规范、技术栈、工作流）", fg="bright_blue")
+        typer.secho(f"\n💡 建议运行 'python -m aegis_toolchain init' 安装规则文件（全局规范、技术栈、工作流）", fg="bright_blue")

@@ -49,7 +49,7 @@ def write(
         state = manager.load()
     except StateCorruptedError as e:
         typer.secho(f"❌ 状态文件异常: {e.detail}", fg="red")
-        typer.secho("   建议: 检查 Aegis/state/state.json 或删除后重新运行 aegis start", fg="yellow")
+        typer.secho("   建议: 检查 Aegis/state/state.json 或删除后重新运行 python -m aegis_toolchain start", fg="yellow")
         raise typer.Exit(1)
 
     req = manager.get_requirement(requirement_id)

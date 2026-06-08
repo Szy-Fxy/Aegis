@@ -1,4 +1,4 @@
-"""aegis upgrade — 升级后同步项目规则文件，保留用户数据"""
+"""python -m aegis_toolchain upgrade — 升级后同步项目规则文件，保留用户数据"""
 
 import hashlib
 import shutil
@@ -41,7 +41,7 @@ def cmd_upgrade(
     cwd = project.resolve()
     target = cwd / "Aegis"
     if not target.exists():
-        typer.secho("❌ 项目尚未初始化。请先运行 aegis init", fg="red")
+        typer.secho("❌ 项目尚未初始化。请先运行 python -m aegis_toolchain init", fg="red")
         raise typer.Exit(1)
 
     try:
@@ -81,7 +81,7 @@ def cmd_upgrade(
         typer.secho(f"\n  保留 {skipped_ts} 个 TechStack 文件（用户定制）", fg="blue")
 
     if dry_run:
-        typer.secho(f"\n  预览完成，运行 aegis upgrade 确认执行", fg="cyan")
+        typer.secho(f"\n  预览完成，运行 python -m aegis_toolchain upgrade 确认执行", fg="cyan")
         return
 
     # 确认

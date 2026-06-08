@@ -25,14 +25,14 @@ def cmd_check(
     if requirement_id is None:
         if not state.active_requirements:
             typer.secho("❌ 没有活跃需求", fg="red")
-            typer.secho("   提示: 运行 'aegis start \"<标题>\"' 开始一个需求", fg="yellow")
+            typer.secho("   提示: 运行 'python -m aegis_toolchain start \"<标题>\"' 开始一个需求", fg="yellow")
             raise typer.Exit(1)
         req = state.active_requirements[0]
     else:
         req = manager.get_requirement(requirement_id)
         if req is None:
             typer.secho(f"❌ 未找到需求: {requirement_id}", fg="red")
-            typer.secho(f"   提示: 运行 'aegis status' 查看所有已登记的需求", fg="yellow")
+            typer.secho(f"   提示: 运行 'python -m aegis_toolchain status' 查看所有已登记的需求", fg="yellow")
             raise typer.Exit(1)
 
     checker = BoundaryChecker(project)

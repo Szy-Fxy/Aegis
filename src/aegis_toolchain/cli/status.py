@@ -37,7 +37,7 @@ def cmd_status(
 
     if not state.active_requirements and not state.completed_requirements:
         typer.secho("ℹ️  暂无需求记录", fg="blue")
-        typer.secho("   运行 'aegis start \"<标题>\"' 开始第一个需求", fg="blue")
+        typer.secho("   运行 'python -m aegis_toolchain start \"<标题>\"' 开始第一个需求", fg="blue")
         return
 
     if state.active_requirements:

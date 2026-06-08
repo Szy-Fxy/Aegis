@@ -8,6 +8,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
+from filelock import FileLock, Timeout
 from loguru import logger
 
 
@@ -16,6 +17,18 @@ class IndexManager:
 
     def __init__(self, project_path: Path) -> None:
         self.path = project_path / "Aegis_Specs" / "INDEX.md"
+        self._lock_path = project_path / "Aegis_Specs" / "INDEX.md.lock"
+
+    def _write_locked(self, content: str) -> None:
+        """加锁写入 INDEX.md"""
+        lock = FileLock(str(self._lock_path), timeout=2)
+        try:
+            with lock.acquire(timeout=2):
+                self.path.parent.mkdir(parents=True, exist_ok=True)
+                self.path.write_text(content, encoding="utf-8")
+        except Timeout:
+            logger.error("INDEX.md 写入超时（文件锁争用）")
+            raise RuntimeError("INDEX.md 正被其他进程占用，请稍后重试")
 
     def read_all(self) -> list[dict[str, str]]:
         """解析 INDEX.md 表格，返回需求列表"""
@@ -68,7 +81,7 @@ class IndexManager:
 
         new_row = f"| {req_id} | {safe_title} | {level} | {status} | {today} | {today} |"
         lines.insert(insert_idx, new_row)
-        self.path.write_text("\n".join(lines), encoding="utf-8")
+        self._write_locked("\n".join(lines))
         logger.info(f"INDEX.md: 新增 {req_id} — {safe_title}")
 
     def update_status(self, req_id: str, status: str) -> None:
@@ -81,11 +94,11 @@ class IndexManager:
         today = datetime.now().strftime("%Y-%m-%d")
 
         pattern = rf"(\|\s*{re.escape(req_id)}\s*\|.+?\|\s*L[123]\s*\|)\s*\S+(?:\s+\S+)*?(\s*\|\s*\d{{4}}-\d{{2}}-\d{{2}}\s*\|)\s*(\d{{4}}-\d{{2}}-\d{{2}})"
-        replacement = rf"\1 {status} \2 {today}"
+        replacement = rf"\1 {status} \2 {today}"  # status 来自 PHASE_DISPLAY_MAP（可信常量，非用户输入）
 
         new_content = re.sub(pattern, replacement, content)
         if new_content != content:
-            self.path.write_text(new_content, encoding="utf-8")
+            self._write_locked(new_content)
             logger.info(f"INDEX.md: 更新 {req_id} 状态 → {status}")
         else:
             logger.warning(f"INDEX.md: 未找到 {req_id}，状态未更新")
@@ -136,7 +149,7 @@ class IndexManager:
 > AI 会在需求状态变更时自动更新此表。
 """
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        self.path.write_text(template, encoding="utf-8")
+        self._write_locked(template)
 
     def get_implementing_id(self) -> Optional[str]:
         """返回当前 implementing 的需求 ID"""

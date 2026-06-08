@@ -2,39 +2,56 @@
 
 ---
 
-## 完整安装流程（全部在 CMD 或 PowerShell 里完成）
+## 完整安装流程
 
-> 下面每一步都是一条命令，复制粘贴进去按回车就行。
+> 前置条件：Python 3.11+ 和 Git。如果还没有 Python，先去 [python.org](https://python.org) 下载安装。
 
-### 1. 安装 Python（如果没有的话）
-
-```powershell
-winget install -e --id Python.Python.3.14
-```
-
-> 如果你电脑上已经有 Python，这条命令会提示"已安装"，直接下一步。
-
-### 2. 刷新 PATH + 安装 Aegis
+### 1. 安装 Aegis
 
 ```powershell
-$env:Path = [Environment]::GetEnvironmentVariable("Path","User") + ";" + [Environment]::GetEnvironmentVariable("Path","Machine"); pip install git+https://github.com/Szy-Fxy/Aegis.git
+pip install git+https://github.com/Szy-Fxy/Aegis.git
 ```
 
-> 第一段 `$env:Path = ...` 是刷新环境变量，让系统找到刚装的 Python 和 pip。
-> 装了 Python 后一定要关掉 CMD 重新打开，或者运行这条刷新命令，否则 `pip` 找不到。
+### 2. 把 `aegis` 命令加到 PATH（Windows 用户必看）
 
-### 3. 进入你的项目并初始化
+pip 安装完会把 `aegis.exe` 放进一个 Scripts 目录，但这个目录**不一定在系统 PATH 里**。
+如果直接敲 `aegis` 报"不是内部或外部命令"，说明需要加 PATH。
+
+**方法 A（一劳永逸，推荐）：**
+
+```powershell
+# 把 Scripts 目录加到用户 PATH（执行一次，永久生效）
+$scripts = "$env:USERPROFILE\AppData\Roaming\Python\Python314\Scripts"
+[Environment]::SetEnvironmentVariable("Path", `
+    [Environment]::GetEnvironmentVariable("Path", "User") + ";" + $scripts, "User")
+# 关掉终端重新打开，之后就能直接敲 aegis 了
+```
+
+**方法 B（不折腾 PATH，每条命令加 `python -m`）：**
+
+```powershell
+# 效果完全一样，只是每次要多打几个字
+python -m aegis_toolchain init
+python -m aegis_toolchain start "功能名称"
+python -m aegis_toolchain check
+```
+
+### 3. 进入项目并初始化
 
 ```powershell
 cd D:\你的项目文件夹路径
 aegis init
 ```
 
+如果上一步选了方法 B，这里用：
+
+```powershell
+python -m aegis_toolchain init
+```
+
 ---
 
 ## 验证安装成功
-
-装完后运行这几条命令，全部正常输出就说明好了：
 
 ```powershell
 aegis --help
@@ -44,7 +61,7 @@ aegis --help
 
 ```
  Usage: aegis [OPTIONS] COMMAND [ARGS]...
- Aegis 开发治理工具链 v5.0.0 — 让流程约束从 AI 自律转向工具强制
+ Aegis 开发治理工具链 v5.2.0 — 让流程约束从 AI 自律转向工具强制
 ```
 
 ```powershell
@@ -55,23 +72,51 @@ aegis status
 
 ---
 
-## 开始开发
+## 快速上手示例
 
-打开 Hana（或其他 AI 工具），打开你的项目文件夹，然后像平时一样和 AI 对话。
+以下演示一个 L2 需求的完整生命周期：
 
-你只需要说需求，AI 会自动：
-- 判断任务是简单修复（L1）还是功能开发（L2）还是架构重构（L3）
-- 写设计文档 → 调子代理审查设计方案 → 写代码 → 调子代理审查代码 → 你确认验收
-- 每一步完成后会告诉你结果，需要你确认时会问你
+```powershell
+# 1. 登记需求
+aegis start "添加背包系统" -l L2
+
+# 2. 写设计文档 → 检查
+aegis check
+
+# 3. 推进到下一阶段
+aegis advance  # design → review_design
+
+# 4. 继续写代码、检查、推进...
+aegis check
+aegis advance  # review_design → implementing
+
+# 5. 写 DevLog
+aegis devlog write REQ-001 -m "完成了背包 UI 和数据结构"
+
+# 6. 推进到 done
+aegis advance
+```
 
 ---
 
-## 碰见问题了？
+## 命令详解
 
-| 现象 | 原因 | 解决 |
+| 命令 | 说明 |
+|------|------|
+| `aegis start <title> -l <L1\|L2\|L3>` | 开始新需求，自动分类和分配 ID |
+| `aegis check` | 执行 BOUNDARY CHECK（边界检查） |
+| `aegis advance` | 推进当前需求到下一阶段 |
+| `aegis status` | 查看项目状态 |
+| `aegis devlog write <id> -m <msg>` | 写开发日志 |
+| `aegis devlog list` | 列出所有 DevLog |
+| `aegis init` | 初始化项目 Aegis 规则 |
+
+---
+
+## 常见问题
+
+| 症状 | 原因 | 解决 |
 |------|------|------|
-| `winget` 不是内部或外部命令 | Windows 版本太低，没有自带 winget | 打开 https://python.org 下载安装，勾上 "Add Python to PATH" |
-| `'pip' 不是内部或外部命令` | Python 装完后没刷新 PATH | 关掉 CMD 重新打开，或运行上面的刷新命令 |
-| `'aegis' 不是内部或外部命令` | 装完没重启 CMD | 关掉 CMD 重新打开 |
-| `aegis init` 后文件不全 | 初始化被中断 | 重新运行 `aegis init --force` |
-| 中文显示乱码 | 终端编码不对 | 在 CMD 里输入 `chcp 65001` 回车 |
+| `'aegis' 不是内部或外部命令` | pip 的 Scripts 目录不在 PATH 里 | 加 PATH（见上面第 2 步）或改用 `python -m aegis_toolchain` |
+| `'python' 不是内部或外部命令` | Python 没装或没加 PATH | 装 Python 3.11+ 并勾选"Add Python to PATH" |
+| `未找到 state.json` | 还没 `aegis init` | 在当前项目目录运行 `aegis init` |

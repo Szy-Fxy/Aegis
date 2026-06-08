@@ -5,7 +5,7 @@ from pathlib import Path
 
 import typer
 
-from aegis_toolchain.core.state_manager import StateManager
+from aegis_toolchain.core.state_manager import StateManager, StateCorruptedError
 
 
 def cmd_status(
@@ -16,7 +16,12 @@ def cmd_status(
     """查看项目当前状态"""
 
     manager = StateManager(project)
-    state = manager.load()
+    try:
+        state = manager.load()
+    except StateCorruptedError as e:
+        typer.secho(f"❌ 状态文件异常: {e.detail}", fg="red")
+        typer.secho("   建议: 检查 Aegis/state/state.json 或删除后重新运行 aegis start", fg="yellow")
+        raise typer.Exit(1)
 
     if json_output:
         typer.echo(state.model_dump_json(indent=2, ensure_ascii=False))
@@ -76,11 +81,7 @@ def _print_requirement_detail(req) -> None:
     bc = req.boundary_checks
     typer.secho(f"\n  BOUNDARY CHECK:", fg="yellow")
     checks = [
-        ("INDEX.md 登记", bc.index_registered),
-        ("设计文档创建", bc.design_created),
-        ("用户确认", bc.user_approved),
-        ("代码编译", bc.code_compiles),
-        ("DevLog 写入", bc.devlog_written),
+        ("DevLog 已写入", bc.devlog_written),
     ]
     for name, passed in checks:
         icon = "✅" if passed else "⬜"

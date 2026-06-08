@@ -36,15 +36,11 @@ def cmd_start(
 
     req_level = RequirementLevel(level_upper)
 
-    # 3. 创建需求（ID 由 StateManager 自动分配）
-    try:
-        manager = StateManager(project)
-    except Exception as e:
-        typer.secho(f"❌ 状态文件异常: {e}", fg="red")
-        raise typer.Exit(1)
+    # 3. 创建需求（ID 由 StateManager.add_requirement 在锁内自动分配）
+    manager = StateManager(project)
 
     req = Requirement(
-        id=manager.get_next_id(),
+        id="REQ-000",  # 占位，add_requirement 内会覆盖
         title=title,
         level=req_level,
         description=description,
@@ -65,9 +61,15 @@ def cmd_start(
         index = IndexManager(project)
         index.add_entry(req.id, req.title, req_level.value, req.phase.display)
     except Exception as e:
-        logger.warning(f"INDEX.md 同步失败（state.json 已保存）: {e}")
+        typer.secho(f"⚠️  INDEX.md 同步失败（state.json 已保存）: {e}", fg="yellow")
+        typer.secho("   请手动检查 Aegis_Specs/INDEX.md", fg="yellow")
 
     # 6. 输出结果
     typer.secho(f"\n✅ 已登记 {req.id} [{req.level.value}] {req.title}", fg="green", bold=True)
     typer.secho(f"   阶段: {req.phase.display}", fg="green")
     typer.secho(f"   下一步: aegis check", fg="blue")
+
+    # 首次使用提示
+    rules_dir = project / "Aegis" / "rules"
+    if not rules_dir.exists():
+        typer.secho(f"\n💡 建议运行 'aegis init' 安装规则文件（全局规范、技术栈、工作流）", fg="bright_blue")

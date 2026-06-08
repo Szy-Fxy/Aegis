@@ -103,12 +103,15 @@ class RuleLoader:
         return ""
 
     def _read_file(self, path: Path) -> str:
-        """安全读取文件"""
+        """安全读取文件，区分不存在和读取错误"""
         if not path.exists():
             logger.debug(f"规则文件不存在: {path}")
             return ""
         try:
             return path.read_text(encoding="utf-8")
-        except Exception as e:
+        except (PermissionError, UnicodeDecodeError) as e:
             logger.warning(f"读取规则文件失败 {path}: {e}")
+            return ""
+        except Exception as e:
+            logger.warning(f"读取规则文件失败（未知错误） {path}: {e}")
             return ""

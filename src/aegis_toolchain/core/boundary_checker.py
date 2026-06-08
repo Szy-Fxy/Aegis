@@ -5,7 +5,7 @@ from pathlib import Path
 
 from loguru import logger
 
-from aegis_toolchain.models.state import Requirement, RequirementLevel, RequirementPhase
+from aegis_toolchain.models.state import PHASE_DISPLAY_MAP, Requirement, RequirementLevel, RequirementPhase
 
 
 @dataclass
@@ -64,6 +64,18 @@ class BoundaryChecker:
     # ── L1 ─────────────────────────────────────
 
     def _check_l1(self, req: Requirement) -> list[CheckResult]:
+        if req.phase == RequirementPhase.PAUSED:
+            return [CheckResult(
+                name="需求已暂停",
+                passed=False,
+                detail=f"{req.id} 处于 ⏸️ paused 状态，无法推进。请手动恢复或完成",
+            )]
+        if req.phase == RequirementPhase.CANCELLED:
+            return [CheckResult(
+                name="需求已取消",
+                passed=False,
+                detail=f"{req.id} 处于 ❌ cancelled 状态，无法推进",
+            )]
         results = [
             self._check_index_registered(req.id),
             self._check_devlog_exists(req.id),
@@ -85,6 +97,18 @@ class BoundaryChecker:
             return self._check_l2_verify(req)
         elif req.phase == RequirementPhase.DONE:
             return self._check_l2_done(req)
+        elif req.phase == RequirementPhase.PAUSED:
+            return [CheckResult(
+                name="需求已暂停",
+                passed=False,
+                detail=f"{req.id} 处于 ⏸️ paused 状态，无法推进。请手动恢复或完成",
+            )]
+        elif req.phase == RequirementPhase.CANCELLED:
+            return [CheckResult(
+                name="需求已取消",
+                passed=False,
+                detail=f"{req.id} 处于 ❌ cancelled 状态，无法推进",
+            )]
         return []
 
     def _check_l2_design(self, req: Requirement) -> list[CheckResult]:
@@ -111,7 +135,7 @@ class BoundaryChecker:
         design_path = self._spec_path(req) / "design.md"
         review_path = self._review_path(req)
         return [
-            self._check_index_status(req.id),
+            self._check_index_status(req.id, req.phase),
             self._check_file(design_path, "设计文档（前置验证）"),
             self._check_file(review_path, "审查文档（前置验证）"),
         ]
@@ -120,7 +144,7 @@ class BoundaryChecker:
         review_path = self._review_path(req)
         design_path = self._spec_path(req) / "design.md"
         return [
-            self._check_index_status(req.id),
+            self._check_index_status(req.id, req.phase),
             self._check_file(design_path, "设计文档（前置验证）"),
             self._check_file(review_path, "审查文档"),
             CheckResult(
@@ -140,11 +164,12 @@ class BoundaryChecker:
         ]
 
     def _check_l2_done(self, req: Requirement) -> list[CheckResult]:
+        done_display = PHASE_DISPLAY_MAP.get(RequirementPhase.DONE, "✅ done")
         return [
             CheckResult(
                 name="INDEX.md 已更新",
-                passed=self._is_index_status(req.id, "✅ done"),
-                detail="INDEX.md 状态应为 ✅ done",
+                passed=self._is_index_status(req.id, done_display),
+                detail=f"INDEX.md 状态应为 {done_display}",
             ),
             self._check_devlog_exists(req.id),
         ]
@@ -165,7 +190,7 @@ class BoundaryChecker:
 
     def _check_l3(self, req: Requirement) -> list[CheckResult]:
         phase = req.phase
-        l3_dir = self.project_path / "Aegis_Specs" / "L3" / "aegis-toolchain"
+        l3_dir = self._spec_path(req)
 
         phase_files: dict[RequirementPhase, tuple[str, str]] = {
             RequirementPhase.BRAINSTORM: ("01-brainstorm.md", "头脑风暴"),
@@ -183,6 +208,18 @@ class BoundaryChecker:
                 results.append(self._check_file(l3_dir / fname, label))
         elif phase == RequirementPhase.DONE:
             return self._check_l2_done(req)
+        elif phase == RequirementPhase.PAUSED:
+            results.append(CheckResult(
+                name="需求已暂停",
+                passed=False,
+                detail=f"{req.id} 处于 ⏸️ paused 状态",
+            ))
+        elif phase == RequirementPhase.CANCELLED:
+            results.append(CheckResult(
+                name="需求已取消",
+                passed=False,
+                detail=f"{req.id} 处于 ❌ cancelled 状态",
+            ))
         elif phase in phase_files:
             fname, label = phase_files[phase]
             results.append(self._check_file(l3_dir / fname, label))
@@ -213,16 +250,16 @@ class BoundaryChecker:
         )
 
     def _check_design_file_exists(self, req: Requirement) -> CheckResult:
-        """检查 design.md 是否存在（L2 使用 _spec_path 净化，L3 使用固定路径）"""
+        """检查 design.md 是否存在（L2/L3 统一使用 _spec_path 净化）"""
         if req.level == RequirementLevel.L3:
-            path = self.project_path / "Aegis_Specs" / "L3" / "aegis-toolchain" / "03-design.md"
+            path = self._spec_path(req) / "03-design.md"
         else:
             path = self._spec_path(req) / "design.md"
 
         return self._check_file(path, "设计文档")
 
-    def _check_index_status(self, req_id: str) -> CheckResult:
-        """检查 INDEX.md 中状态是否为 implementing"""
+    def _check_index_status(self, req_id: str, phase: RequirementPhase) -> CheckResult:
+        """检查 INDEX.md 中指定需求的状态是否匹配当前阶段"""
         index_path = self.project_path / "Aegis_Specs" / "INDEX.md"
         if not index_path.exists():
             return CheckResult(name="INDEX.md 状态", passed=False, detail="INDEX.md 不存在")
@@ -230,16 +267,22 @@ class BoundaryChecker:
         content = self._read_safe(index_path)
         if content is None:
             return CheckResult(name="INDEX.md 状态", passed=False, detail="INDEX.md 无法读取")
-        if "implementing" in content.lower() and req_id in content:
-            return CheckResult(
-                name="INDEX.md 状态",
-                passed=True,
-                detail=f"{req_id} 状态为 implementing",
-            )
+
+        expected = PHASE_DISPLAY_MAP.get(phase, phase.value)
+
+        # 逐行检查：同一行内 req_id 和 expected 状态同时出现
+        for line in content.split("\n"):
+            if req_id in line and expected in line:
+                return CheckResult(
+                    name="INDEX.md 状态",
+                    passed=True,
+                    detail=f"{req_id} 状态为 {expected}",
+                )
+
         return CheckResult(
             name="INDEX.md 状态",
             passed=False,
-            detail=f"{req_id} 状态不是 implementing",
+            detail=f"{req_id} 状态不是 {expected}（当前行: {expected}）",
         )
 
     def _check_devlog_exists(self, req_id: str) -> CheckResult:

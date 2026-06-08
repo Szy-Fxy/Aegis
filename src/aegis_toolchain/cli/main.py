@@ -2,18 +2,29 @@
 
 import typer
 
+from aegis_toolchain import __version__
 from aegis_toolchain.utils.logging import setup_logging
 
 app = typer.Typer(
     name="aegis",
-    help="Aegis 开发治理工具链 v5.1.1 — 让流程约束从 AI 自律转向工具强制",
+    help=f"Aegis 开发治理工具链 v{__version__} — 让流程约束从 AI 自律转向工具强制",
     no_args_is_help=True,
+    rich_markup_mode="rich",
 )
 
 
+def version_callback(value: bool) -> None:
+    if value:
+        typer.echo(f"Aegis Toolchain v{__version__}")
+        raise typer.Exit()
+
+
 @app.callback()
-def main(verbose: bool = typer.Option(False, "--verbose", "-v", help="详细输出")):
-    """Aegis Toolchain v5.1.0"""
+def main(
+    verbose: bool = typer.Option(False, "--verbose", "-v", help="详细输出"),
+    version: bool = typer.Option(False, "--version", help="显示版本号", callback=version_callback, is_eager=True),
+):
+    """Aegis AI 开发治理工具链"""
     setup_logging(verbose=verbose)
 
 

@@ -4,7 +4,7 @@ from pathlib import Path
 
 import typer
 
-from aegis_toolchain.core.state_manager import StateManager
+from aegis_toolchain.core.state_manager import StateManager, StateCorruptedError
 from aegis_toolchain.core.boundary_checker import BoundaryChecker
 
 
@@ -15,7 +15,12 @@ def cmd_check(
     """执行当前阶段的 BOUNDARY CHECK"""
 
     manager = StateManager(project)
-    state = manager.load()
+    try:
+        state = manager.load()
+    except StateCorruptedError as e:
+        typer.secho(f"❌ 状态文件异常: {e.detail}", fg="red")
+        typer.secho("   建议: 检查 Aegis/state/state.json 或删除后重新运行 aegis start", fg="yellow")
+        raise typer.Exit(1)
 
     if requirement_id is None:
         if not state.active_requirements:
@@ -38,7 +43,7 @@ def cmd_check(
     typer.secho(f"{'='*50}\n", fg="cyan")
 
     for r in report.results:
-        icon = "✅" if r.passed else "✗"
+        icon = "✅" if r.passed else "❌"
         color = "green" if r.passed else "red"
         typer.secho(f"  {icon} {r.name}", fg=color, bold=True)
         typer.secho(f"     {r.detail}", fg=color)

@@ -10,7 +10,7 @@ from pathlib import Path
 import typer
 from loguru import logger
 
-from aegis_toolchain.core.state_manager import StateManager
+from aegis_toolchain.core.state_manager import StateManager, StateCorruptedError
 from aegis_toolchain.utils.fs import ensure_dir
 
 app = typer.Typer(help="DevLog 操作", no_args_is_help=True)
@@ -45,7 +45,12 @@ def write(
 ) -> None:
     """写入 DevLog 条目"""
     manager = StateManager(project)
-    state = manager.load()
+    try:
+        state = manager.load()
+    except StateCorruptedError as e:
+        typer.secho(f"❌ 状态文件异常: {e.detail}", fg="red")
+        typer.secho("   建议: 检查 Aegis/state/state.json 或删除后重新运行 aegis start", fg="yellow")
+        raise typer.Exit(1)
 
     req = manager.get_requirement(requirement_id)
     if req is None:

@@ -1,83 +1,64 @@
 # Aegis Toolchain
 
-> 🛠️ Aegis AI 开发治理工具链 v5.1.1
-> 让流程约束从 AI 自律转向工具强制
+> 🛠️ Aegis AI 开发治理工具链 v5.2.0<br>
+> 让 AI 辅助开发的流程从「自律」转向「工具强制」
 
----
+## 前置条件
 
-## ⚠️ Aegis 纯 SKILL.md 版本已弃用
-
-Aegis v3.1.x（纯 SKILL.md 文档驱动版本）已于 2026-06-05 起弃用。
-旧版代码已归档到 [`legacy-v3.1`](../../tree/legacy-v3.1) 分支，tag `v3.1.0` 可下载。
-
----
-
-## 什么是 Aegis Toolchain
-
-Aegis AI 开发治理系统的外挂工具链。解决纯 SKILL.md 方案的三个致命缺陷：
-
-| 旧方案（纯 SKILL.md） | 新方案（Toolchain） |
-|---|---|
-| AI 可能跳过规则，触发不可靠 | 预处理器 + CLI 辅助注入规则 |
-| BOUNDARY CHECK 由 AI 自查自证 | `aegis check` 独立执行验证 |
-| DevLog 文本描述，断点恢复不可靠 | `state.json` 结构化状态，精确断点续做 |
-| 无 Git 层兜底 | pre-commit hook 阻断不合规提交 |
+- Python 3.11+
+- Git
 
 ## 安装
-详细指南：https://github.com/Szy-Fxy/Aegis/blob/main/USAGE.md
-```bash
+
+```powershell
 pip install git+https://github.com/Szy-Fxy/Aegis.git
 ```
 
-> 如果你电脑上没有 Python：打开 https://python.org 下载安装，安装时记得勾 "Add Python to PATH"。
-> 安装完成后关掉 CMD 重新打开。
+或本地安装：
 
-## 在你的项目里初始化
-
-```bash
-cd 你的游戏项目
- aegis init
+```powershell
+pip install D:\SOLO_Project\aegis-toolchain
 ```
 
-## 开始开发
-
-打开 Hana，打开你的项目文件夹，正常对话就行。
-AI 会自动走 Aegis 流程：分类 → 设计 → 审查 → 实现 → 验收。
-
-> 📘 **详细说明**: [USAGE.md](USAGE.md) — 从零开始的逐步教程
+Windows 用户注意：安装后如果 `aegis` 命令找不到，需要把 `%USERPROFILE%\AppData\Roaming\Python\Python3XX\Scripts` 加到 PATH。详见 [USAGE.md](USAGE.md)。
 
 ## 命令速查
 
-| 命令 | 说明 |
+| 命令 | 作用 |
 |------|------|
-| `aegis start <标题> -l <L1/L2/L3/auto>` | 开始新需求，自动分类 |
-| `aegis check [REQ-ID]` | 执行 BOUNDARY CHECK |
-| `aegis advance [REQ-ID] [-f]` | 推进到下一阶段 |
-| `aegis status [REQ-ID] [--json]` | 查看项目状态 |
-| `aegis devlog write <REQ-ID> -m <内容>` | 写入 DevLog |
-| `aegis devlog show [REQ-ID]` | 查看 DevLog |
-| `aegis preprocess <消息>` | 预处理用户消息 |
+| `aegis init` | 初始化项目 Aegis 规则 |
+| `aegis start "<标题>" -l L2` | 开始一个新需求 |
+| `aegis check` | 执行 BOUNDARY CHECK |
+| `aegis advance` | 推进到下一阶段 |
+| `aegis status` | 查看项目状态 |
+| `aegis devlog write REQ-001 -m "..."` | 写开发日志 |
 
-## 架构
+## 需求分级
 
-```
-src/aegis_toolchain/
-├── cli/              # Typer CLI 命令
-├── core/             # 核心逻辑（StateManager, BoundaryChecker, RuleLoader, IndexManager）
-├── preprocessor/     # 预处理器（Classifier, Injector）
-├── hooks/            # Git pre-commit hook
-├── models/           # Pydantic 数据模型（AegisState, Requirement）
-└── utils/            # 工具函数（loguru, 文件系统）
-```
+| 级别 | 说明 | 阶段数 | 示例 |
+|:---:|------|:---:|------|
+| L1 | 小修复 | 1 阶段 | 改配置、修 typo |
+| L2 | 功能/模块 | 5 阶段 | 加背包系统 |
+| L3 | 架构改造 | 7 阶段 | 重写渲染管线 |
 
 ## 路线图
 
-| 阶段 | 内容 | 状态 |
-|------|------|------|
-| Phase 1 | CLI + state.json + pre-commit hook | ✅ v5.0.0 |
+| Phase | 内容 | 状态 |
+|:---:|------|:---:|
+| Phase 1 | CLI + state.json + pre-commit hook + 测试 | ✅ v5.2.0 |
 | Phase 2 | MCP Server + YAML 状态机 | 📋 规划中 |
-| Phase 3 | 全 MCP 生态 | 📋 规划中 |
+| Phase 3 | 全 MCP 生态 | 💡 设想 |
 
-## 许可
+## 开发
 
-MIT
+```powershell
+python -m pytest tests/ -q
+```
+
+## 已知问题
+
+[KNOWN_ISSUES.md](KNOWN_ISSUES.md)
+
+## 许可证
+
+MIT — 详见 [LICENSE](LICENSE)

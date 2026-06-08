@@ -19,8 +19,8 @@ class ClassificationResult:
 
 # 关键词表：按优先级从高到低
 L3_KEYWORDS: list[str] = ["架构", "重构", "重写", "大改", "重新设计"]
-L2_KEYWORDS: list[str] = ["新增", "功能", "模块", "优化", "feature", "实现", "添加", "增加", "开发"]
-L1_KEYWORDS: list[str] = ["修复", "fix", "改个", "小改", "配置", "typo", "颜色", "文案", "bug", "改一下", "改下"]
+L2_KEYWORDS: list[str] = ["新增", "功能", "模块", "优化", "feature", "实现", "添加", "增加", "开发", "重构", "设计"]
+L1_KEYWORDS: list[str] = ["修复", "fix", "改个", "小改", "typo", "颜色", "文案", "bug", "改一下", "改下", "拼写", "格式", "注释"]
 
 
 def classify(user_message: str) -> ClassificationResult:

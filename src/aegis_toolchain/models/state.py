@@ -47,11 +47,12 @@ class RequirementPhase(str, Enum):
         return _map.get(self.value, self.value)
 
 
+# 阶段到 INDEX.md 状态字符串的映射（advance.py / boundary_checker.py 引用此处唯一来源）
+PHASE_DISPLAY_MAP: dict[RequirementPhase, str] = {p: p.display for p in RequirementPhase}
+
+
 class BoundaryChecks(BaseModel):
-    """各阶段 BOUNDARY CHECK 的记录"""
-    index_registered: bool = False
-    design_created: bool = False
-    user_approved: bool = False
+    """各阶段 BOUNDARY CHECK 的记录（运行时从文件系统推导，此处仅记录持久化字段）"""
     devlog_written: bool = False
 
 

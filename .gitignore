@@ -26,5 +26,10 @@ htmlcov/
 .DS_Store
 Thumbs.db
 
-# Aegis state (project-specific, not part of toolchain)
+# Aegis project files (development artifacts)
 Aegis/state/
+Aegis_Specs/
+Aegis/rules/DevLogs/
+
+# Test artifacts
+aegis-test-*/

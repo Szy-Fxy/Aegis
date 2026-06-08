@@ -27,12 +27,16 @@ def main() -> int:
 
     # 加载 state.json
     try:
-        from aegis_toolchain.core.state_manager import StateManager
+        from aegis_toolchain.core.state_manager import StateManager, StateCorruptedError
 
         manager = StateManager(project_path)
         state = manager.load()
-    except Exception as e:
-        print(f"[Aegis Hook] ⚠️ 无法读取 state.json: {e}")
+    except StateCorruptedError as e:
+        print(f"[Aegis Hook] ⚠️ state.json 数据损坏: {e}")
+        print("[Aegis Hook] 跳过 Aegis 检查，允许提交")
+        return 0
+    except (ImportError, ModuleNotFoundError, FileNotFoundError) as e:
+        print(f"[Aegis Hook] ⚠️ 无法加载 Aegis 模块: {e}")
         print("[Aegis Hook] 跳过 Aegis 检查，允许提交")
         return 0
 
@@ -54,14 +58,14 @@ def main() -> int:
         else:
             print(f"[Aegis Hook] ❌ REQ-{active.id} ({active.title}) BOUNDARY CHECK 未通过:")
             for r in report.results:
-                status = "✅" if r.passed else "✗"
+                status = "✅" if r.passed else "❌"
                 print(f"  {status} {r.name}: {r.detail}")
             print()
             print("[Aegis Hook] 提交已被阻断。请完成以上缺失项后重试。")
             print("[Aegis Hook] 提示: 运行 'aegis check' 查看详情")
             return 1
-    except Exception as e:
-        print(f"[Aegis Hook] ⚠️ BOUNDARY CHECK 执行失败: {e}")
+    except (RuntimeError, ValueError, AttributeError) as e:
+        print(f"[Aegis Hook] ⚠️ BOUNDARY CHECK 执行异常: {e}")
         print("[Aegis Hook] 允许提交（避免阻塞正常开发）")
         return 0
 

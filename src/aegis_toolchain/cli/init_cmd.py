@@ -9,7 +9,6 @@ except ImportError:
     from importlib_resources import files  # Python < 3.11 fallback
 
 import typer
-from loguru import logger
 
 
 def init_project(
@@ -28,19 +27,23 @@ def init_project(
     if target.exists() and not force:
         existing = list(target.rglob("*"))
         if any(f.is_file() for f in existing):
-            logger.warning(f"Aegis/ 已存在且非空。使用 --force 覆盖")
+            typer.secho("⚠️  Aegis/ 已存在且非空。使用 --force 覆盖", fg="yellow")
             raise typer.Exit(0)
 
     try:
         data_root = files("aegis_toolchain.data")
     except Exception as e:
-        logger.error(f"无法找到内置规则数据: {e}")
+        typer.secho(f"❌ 无法找到内置规则数据: {e}", fg="red")
         raise typer.Exit(1)
 
     # 复制 rules（含 TempData、DevLogs、TechStack、global.md）
+    if force:
+        shutil.rmtree(target / "rules", ignore_errors=True)
     _copy_dir(data_root, "rules", target / "rules")
 
     # 复制 skills（含 dev-workflow、aegis-boot）
+    if force:
+        shutil.rmtree(target / "skills", ignore_errors=True)
     _copy_dir(data_root, "skills", target / "skills")
 
     # 创建 specs 目录和 INDEX.md
@@ -76,24 +79,57 @@ def init_project(
             encoding="utf-8",
         )
 
-    # 创建 DevLogs 目录
-    (target / "rules" / "DevLogs").mkdir(parents=True, exist_ok=True)
+    # 创建 DevLogs 目录（带 .gitignore 防止开发日志意外提交到公开仓库）
+    devlog_dir = target / "rules" / "DevLogs"
+    devlog_dir.mkdir(parents=True, exist_ok=True)
+    (devlog_dir / ".gitignore").write_text(
+        "# DevLog 是开发过程中的详细记录，默认不入版本库\n"
+        "*.md\n"
+        "!.gitignore\n",
+        encoding="utf-8",
+    )
+
+    # 复制 AGENTS.md 到项目根目录（引导非 Hana AI 工具发现 Aegis 规则）
+    agents_status = None  # None=未知, "created"=新建, "skipped"=跳过, "overwritten"=覆盖
+    agents_src = data_root / "AGENTS.md"
+    agents_dst = cwd / "AGENTS.md"
+    if agents_src.exists() and agents_src.is_file():
+        if agents_dst.exists() and not force:
+            typer.secho("⚠️  AGENTS.md 已存在，跳过", fg="yellow")
+            agents_status = "skipped"
+        else:
+            existed_before = agents_dst.exists()
+            if existed_before and force:
+                typer.secho("⚠️  AGENTS.md 将被覆盖", fg="yellow")
+            content = agents_src.read_text(encoding="utf-8")
+            agents_dst.write_text(content, encoding="utf-8")
+            agents_status = "overwritten" if existed_before else "created"
+    else:
+        typer.secho("⚠️  内置 AGENTS.md 模板缺失", fg="yellow")
 
     # 报告
     file_count = _count_files(target)
-    logger.success(f"已初始化 {file_count} 个文件")
-    logger.info(f"  规则目录: {target / 'rules'}")
-    logger.info(f"  技能目录: {target / 'skills'}")
-    logger.info(f"  aegis-boot 初始化完成后安装: {target / 'skills' / 'aegis-boot' / 'SKILL.md'}")
-    logger.info(f"  需求目录: {specs}")
-    logger.info(f"  现在可以开始使用: aegis start \"需求标题\"")
+    if agents_status in ("created", "overwritten"):
+        file_count += 1  # AGENTS.md 在 Aegis/ 目录外，单独计数
+    typer.secho(f"\n[OK] Aegis 初始化完成 ({file_count} 个文件)", fg="green", bold=True)
+    typer.secho(f"\n  >> 项目已配置:", fg="blue")
+    typer.secho(f"     开发流程规则     Aegis/rules/", fg="blue")
+    typer.secho(f"     AI 协作规范      Aegis/skills/", fg="blue")
+    if agents_status == "skipped":
+        typer.secho(f"     协作入口文件      AGENTS.md (已存在，跳过)", fg="blue")
+    elif agents_status in ("created", "overwritten"):
+        typer.secho(f"     协作入口文件      AGENTS.md", fg="blue")
+    typer.secho(f"     需求追踪          Aegis_Specs/", fg="blue")
+    typer.secho(f"\n  >> 下一步:", fg="blue")
+    typer.secho(f"     aegis start \"需求标题\" -l L2", fg="blue")
+    typer.secho(f"\n  >> 使用指南: https://github.com/Szy-Fxy/Aegis/blob/main/USAGE.md", fg="blue")
 
 
 def _copy_dir(data_root, rel_src: str, dst: Path) -> None:
     """递归复制 data 子目录到目标路径。"""
     src = data_root / rel_src
     if not src.exists():
-        logger.warning(f"内置数据缺少: {rel_src}")
+        typer.secho(f"⚠️  内置数据缺少: {rel_src}", fg="yellow")
         return
 
     dst.mkdir(parents=True, exist_ok=True)

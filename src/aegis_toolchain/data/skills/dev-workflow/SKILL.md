@@ -9,7 +9,7 @@ description: "Aegis 开发工作流核心引擎 v5.2.0。定义需求分级(L1/L
 
 本文件定义了 AI 从接收到需求到完成交付的完整流程，包括需求分级、阶段规范、规则加载、进程恢复和收尾仪式。
 
-**核心变更**：状态管理（INDEX.md 登记/更新、DevLog 写入、BOUNDARY CHECK）全部通过 `aegis` CLI 命令自动完成，AI 不再手动编辑这些文件。AI 的职责是创建内容性文档（design.md、review.md、verify.md）和执行子代理审查。
+**核心变更**：状态管理（INDEX.md 登记/更新、DevLog 写入、BOUNDARY CHECK）全部通过 `aegis` CLI 命令自动完成，AI 不再手动编辑这些文件。INDEX.md 路径固定为 `Aegis_Specs/INDEX.md`，AI 不得在其他路径新建 INDEX.md。AI 的职责是创建内容性文档（design.md、review.md、verify.md）和执行子代理审查。
 
 ---
 

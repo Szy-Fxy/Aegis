@@ -13,7 +13,7 @@ pip install git+https://github.com/Szy-Fxy/Aegis.git
 ### 本地安装
 
 ```powershell
-pip install D:\SOLO_Project\aegis-toolchain
+pip install D:\YourProject\aegis-toolchain
 ```
 
 ---
@@ -196,3 +196,15 @@ pip uninstall aegis-toolchain
 ```powershell
 pip install --upgrade git+https://github.com/Szy-Fxy/Aegis.git
 ```
+
+升级工具链后，规则文件还是旧版本，需要同步到项目：
+
+```powershell
+cd D:\你的项目文件夹路径
+aegis upgrade
+```
+
+`aegis upgrade` 会：
+- 覆盖系统规则文件（备份原文件到 `Aegis/.backup/`）
+- 跳过 TechStack 文件（你定制的部分保留不变）
+- **不碰** DevLogs、state、TempData、Aegis_Specs、INDEX.md、AGENTS.md

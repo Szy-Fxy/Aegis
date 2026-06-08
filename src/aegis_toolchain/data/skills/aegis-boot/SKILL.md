@@ -35,6 +35,7 @@ Use the classification table in the workflow engine. **Tell the user your classi
 
 > **IMPORTANT**: Use the `aegis` CLI tool for ALL state management (register, advance, check, devlog).
 > Do NOT manually edit INDEX.md, do NOT manually update phase status.
+> INDEX.md 路径：`Aegis_Specs/INDEX.md`（由 `aegis init` 生成）。AI 不得在其他路径新建 INDEX.md。
 
 ---
 

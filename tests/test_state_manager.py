@@ -8,7 +8,7 @@ from aegis_toolchain.models.state import (
     RequirementPhase,
 )
 from aegis_toolchain.core.state_manager import StateManager, StateCorruptedError
-from conftest import make_req
+from helpers import make_req
 
 
 class TestStateManagerInit:

@@ -45,7 +45,7 @@ class TestCliHelp:
     def test_version(self):
         result = runner.invoke(app, ["--version"])
         assert result.exit_code == 0
-        assert "5.2.0" in result.stdout
+        assert "5.2.1" in result.stdout
 
 
 class TestCliStart:

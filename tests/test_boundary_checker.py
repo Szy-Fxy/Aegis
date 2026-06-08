@@ -17,7 +17,7 @@ from aegis_toolchain.models.state import (
     RequirementLevel,
     RequirementPhase,
 )
-from conftest import make_req
+from helpers import make_req
 
 
 @pytest.fixture

@@ -15,22 +15,7 @@ from aegis_toolchain.models.state import (
 )
 from aegis_toolchain.core.state_manager import StateManager
 from aegis_toolchain.core.index_manager import IndexManager
-
-
-def make_req(title="测试需求", level=RequirementLevel.L1, phase=RequirementPhase.IMPLEMENTING, req_id="REQ-001"):
-    """快捷构造 Requirement"""
-    return Requirement(
-        id=req_id,
-        title=title,
-        level=level,
-        phase=phase,
-        description=f"{title}的描述",
-    )
-
-
-def make_state(*reqs):
-    """快捷构造 AegisState"""
-    return AegisState(active_requirements=list(reqs))
+from helpers import make_req, make_state
 
 
 @pytest.fixture

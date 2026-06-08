@@ -2,48 +2,131 @@
 
 ---
 
-## 完整安装流程
+## 安装
 
-> 前置条件：Python 3.11+ 和 Git。如果还没有 Python，先去 [python.org](https://python.org) 下载安装。
-
-### 1. 安装 Aegis
+### GitHub 安装
 
 ```powershell
 pip install git+https://github.com/Szy-Fxy/Aegis.git
 ```
 
-### 2. 把 `aegis` 命令加到 PATH（Windows 用户必看）
-
-pip 安装完会把 `aegis.exe` 放进一个 Scripts 目录，但这个目录**不一定在系统 PATH 里**。
-如果直接敲 `aegis` 报"不是内部或外部命令"，说明需要加 PATH。
-
-**方法 A（一劳永逸，推荐）：**
+### 本地安装
 
 ```powershell
-# 把 Scripts 目录加到用户 PATH（执行一次，永久生效）
-$scripts = "$env:USERPROFILE\AppData\Roaming\Python\Python314\Scripts"
-[Environment]::SetEnvironmentVariable("Path", `
-    [Environment]::GetEnvironmentVariable("Path", "User") + ";" + $scripts, "User")
-# 关掉终端重新打开，之后就能直接敲 aegis 了
+pip install D:\SOLO_Project\aegis-toolchain
 ```
 
-**方法 B（不折腾 PATH，每条命令加 `python -m`）：**
+---
+
+## 安装验证
+
+安装完成后执行：
 
 ```powershell
-# 效果完全一样，只是每次要多打几个字
+aegis --help
+```
+
+正常情况下会显示 Aegis 命令帮助界面。
+
+---
+
+## Windows 常见问题
+
+### 'aegis' 不是内部或外部命令
+
+如果执行：
+
+```powershell
+aegis
+```
+
+出现：
+
+```
+'aegis' 不是内部或外部命令，也不是可运行的程序或批处理文件。
+```
+
+通常表示 Aegis 已成功安装，但 Python Scripts 目录尚未加入 PATH。
+
+### 验证是否安装成功
+
+直接执行：
+
+```powershell
+python -m aegis_toolchain --help
+```
+
+如果能够显示 Aegis 帮助信息，则说明安装成功，仅为 PATH 配置问题。
+
+### 解决方案
+
+Python Scripts 目录一般在 `%APPDATA%\Python\Python3XX\Scripts`（`3XX` 是你的 Python 版本号，如 `311`、`312`、`313`、`314`）。
+
+将这个目录加入用户 PATH：
+
+**方法 A（一劳永逸，推荐）**：
+
+> ⚠️ 不要用 `setx PATH` 方式加 PATH——`setx` 有 1024 字符限制，PATH 过长时会静默截断，导致系统 PATH 损坏。
+
+```powershell
+# PowerShell（执行一次，永久生效）
+$scripts = "$env:APPDATA\Python\Python314\Scripts"
+$oldPath = [Environment]::GetEnvironmentVariable("Path", "User")
+if ($oldPath -notlike "*$scripts*") {
+    [Environment]::SetEnvironmentVariable("Path", "$oldPath;$scripts", "User")
+}
+```
+
+```cmd
+REM CMD（执行一次，永久生效）
+set "scripts=%APPDATA%\Python\Python314\Scripts"
+setx PATH "%PATH%;%scripts%"
+```
+
+> 如果你担心 PATH 截断风险，可以用 CMD 的 `setx` 但先备份当前 PATH：在 CMD 中执行 `echo %PATH% > %USERPROFILE%\path_backup.txt`。
+
+执行完成后：
+1. 关闭当前 CMD / PowerShell
+2. 重新打开终端
+3. 执行 `aegis --help` 即可正常使用
+
+**方法 B（不折腾 PATH，每条命令加 `python -m`）**：
+
+```powershell
+# CMD / PowerShell 都通用
 python -m aegis_toolchain init
 python -m aegis_toolchain start "功能名称"
 python -m aegis_toolchain check
 ```
 
-### 3. 进入项目并初始化
+### 查看 aegis 实际位置
+
+```cmd
+REM CMD
+where aegis
+```
+
+```powershell
+# PowerShell
+Get-Command aegis
+```
+
+正常情况下应返回：
+
+```
+C:\Users\<用户名>\AppData\Roaming\Python\Python314\Scripts\aegis.exe
+```
+
+---
+
+## 初始化项目
 
 ```powershell
 cd D:\你的项目文件夹路径
 aegis init
 ```
 
-如果上一步选了方法 B，这里用：
+如果用的是方法 B，这里用：
 
 ```powershell
 python -m aegis_toolchain init
@@ -51,18 +134,7 @@ python -m aegis_toolchain init
 
 ---
 
-## 验证安装成功
-
-```powershell
-aegis --help
-```
-
-应该显示：
-
-```
- Usage: aegis [OPTIONS] COMMAND [ARGS]...
- Aegis 开发治理工具链 v5.2.0 — 让流程约束从 AI 自律转向工具强制
-```
+## 验证初始化成功
 
 ```powershell
 aegis status
@@ -99,24 +171,28 @@ aegis advance
 
 ---
 
-## 命令详解
+## 命令速查
 
 | 命令 | 说明 |
 |------|------|
+| `aegis init` | 初始化项目 Aegis 规则 |
 | `aegis start <title> -l <L1\|L2\|L3>` | 开始新需求，自动分类和分配 ID |
 | `aegis check` | 执行 BOUNDARY CHECK（边界检查） |
 | `aegis advance` | 推进当前需求到下一阶段 |
 | `aegis status` | 查看项目状态 |
 | `aegis devlog write <id> -m <msg>` | 写开发日志 |
 | `aegis devlog list` | 列出所有 DevLog |
-| `aegis init` | 初始化项目 Aegis 规则 |
 
 ---
 
-## 常见问题
+## 卸载
 
-| 症状 | 原因 | 解决 |
-|------|------|------|
-| `'aegis' 不是内部或外部命令` | pip 的 Scripts 目录不在 PATH 里 | 加 PATH（见上面第 2 步）或改用 `python -m aegis_toolchain` |
-| `'python' 不是内部或外部命令` | Python 没装或没加 PATH | 装 Python 3.11+ 并勾选"Add Python to PATH" |
-| `未找到 state.json` | 还没 `aegis init` | 在当前项目目录运行 `aegis init` |
+```powershell
+pip uninstall aegis-toolchain
+```
+
+## 升级
+
+```powershell
+pip install --upgrade git+https://github.com/Szy-Fxy/Aegis.git
+```

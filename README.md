@@ -4,7 +4,7 @@
 > 让 AI 辅助开发的流程从「自律」转向「工具强制」
 
 <<<<<<< HEAD
-> 💡 **初始对话前请先`aegis start`，别手写 INDEX.md。登记、推进、记录自动化。**
+> 💡 **初次对话前请先`aegis start`，别手写 INDEX.md。登记、推进、记录自动化。**
 =======
 > 💡 **初始对话前请先`aegis start`。别手写 INDEX.md。登记、推进、记录自动化。**
 >>>>>>> a98a5bc (fix: CI/测试全面修复 — pyproject.toml dev extras, test.yml 拆分+CACHE+版本锁定, helpers.py 消除 conftest 导入脆弱性, Dependabot)

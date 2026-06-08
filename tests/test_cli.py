@@ -9,6 +9,7 @@ import pytest
 from typer.testing import CliRunner
 
 from aegis_toolchain.cli.main import app
+from aegis_toolchain import __version__
 
 runner = CliRunner()
 
@@ -45,7 +46,7 @@ class TestCliHelp:
     def test_version(self):
         result = runner.invoke(app, ["--version"])
         assert result.exit_code == 0
-        assert "5.2.1" in result.stdout
+        assert __version__ in result.stdout
 
 
 class TestCliStart:

@@ -3,12 +3,8 @@
 > 🛠️ Aegis AI 开发治理工具链 v5.2.1<br>
 > 让 AI 辅助开发的流程从「自律」转向「工具强制」
 
-<<<<<<< HEAD
 > 💡 **初次对话前请先`aegis start`，别手写 INDEX.md。登记、推进、记录自动化。**
 =======
-> 💡 **初始对话前请先`aegis start`。别手写 INDEX.md。登记、推进、记录自动化。**
->>>>>>> a98a5bc (fix: CI/测试全面修复 — pyproject.toml dev extras, test.yml 拆分+CACHE+版本锁定, helpers.py 消除 conftest 导入脆弱性, Dependabot)
-
 > 💡 **由于当前第一阶段的局限性，对话轮数过长或上下文太多时，每提一个需求前加一句 'aegis'**
 ## 前置条件
 

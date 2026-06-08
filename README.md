@@ -1,6 +1,6 @@
 # Aegis Toolchain
 
-> 🛠️ Aegis AI 开发治理工具链 v5.2.0<br>
+> 🛠️ Aegis AI 开发治理工具链 v5.2.1<br>
 > 让 AI 辅助开发的流程从「自律」转向「工具强制」
 
 > 💡 **提新需求请用 `aegis start`，别手写 INDEX.md。登记、推进、记录自动化。**
@@ -40,11 +40,11 @@ Windows 用户注意：安装后如果 `aegis` 命令找不到，需要把 `%USE
 
 ## 路线图
 
-| Phase | 内容 | 状态 |
-|:---:|------|:---:|
-| Phase 1 | CLI + state.json + pre-commit hook + 测试 | ✅ v5.2.0 |
-| Phase 2 | MCP Server + YAML 状态机 | 📋 规划中 |
-| Phase 3 | 全 MCP 生态 | 💡 设想 |
+| Phase   | 内容                                      | 状态       |
+| ------- | --------------------------------------- | -------- |
+| Phase 1 | CLI + state.json + pre-commit hook + 测试 | ✅ v5.2.1 |
+| Phase 2 | MCP Server + YAML 状态机                   | 📋 规划中   |
+| Phase 3 | 全 MCP 生态                                | 💡 设想    |
 
 ## 开发
 

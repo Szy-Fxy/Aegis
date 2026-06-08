@@ -14,12 +14,6 @@
 pip install git+https://github.com/Szy-Fxy/Aegis.git
 ```
 
-或本地安装：
-
-```powershell
-pip install D:\SOLO_Project\aegis-toolchain
-```
-
 Windows 用户注意：安装后如果 `aegis` 命令找不到，需要把 `%USERPROFILE%\AppData\Roaming\Python\Python3XX\Scripts` 加到 PATH。详见 [USAGE.md](USAGE.md)。
 
 ## 命令速查

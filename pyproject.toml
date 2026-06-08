@@ -21,7 +21,7 @@ aegis = "aegis_toolchain.__main__:app"
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=8.0,<9.0",
+    "pytest>=8.0,<10.0",
     "pytest-cov>=5.0,<7.0",
     "ruff>=0.5,<1.0",
     "mypy>=1.10,<2.0",

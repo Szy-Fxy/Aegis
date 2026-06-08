@@ -1,5 +1,13 @@
 # Changelog
 
+## v5.2.1 (2026-06-08) — 完善入口与升级
+
+- `aegis upgrade` 命令：升级后同步项目规则文件，备份旧版，保留用户数据
+- INDEX.md 路径固定为 `Aegis_Specs/INDEX.md`（aegis-boot + dev-workflow SKILL.md）
+- README 添加提需求提醒
+- USAGE.md 补充本地安装路径和升级说明
+- AGENTS.md、KNOWN_ISSUES.md 首次纳入仓库
+
 ## v5.2.0 (2026-06-08) — Phase 1 Complete
 
 - aegis init 新增 AGENTS.md 自动生成，引导非 Hana AI 工具发现 Aegis 规则

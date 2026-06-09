@@ -1,9 +1,9 @@
 ---
 name: "dev-workflow"
-description: "Aegis 开发工作流核心引擎 v5.2.1。定义需求分级(L1/L2/L3)、阶段流程、规则加载、进程恢复、TempData 管理、DevLogs 记录等全部工作流规则。"
+description: "Aegis 开发工作流核心引擎 v5.2.2。定义需求分级(L1/L2/L3)、阶段流程、规则加载、进程恢复、TempData 管理、DevLogs 记录等全部工作流规则。"
 ---
 
-# 开发工作流引擎 v5.2.0
+# 开发工作流引擎 v5.2.2
 
 ## 概述
 
@@ -260,5 +260,6 @@ L2/L3 需求全部完成后，AI 必须执行以下收尾步骤：
 
 | 日期 | 版本 | 改动 |
 |------|------|------|
+| 2026-06-09 | v5.2.2 | P0/P1 修复：L2-3 补用户确认、BOUNDARY CHECK 标注、devlog list、状态表补全 |
 | 2026-06-07 | v5.2.0 | Phase 1 Complete：240 测试覆盖全模块、P0 修复 L3 路径硬编码、PAUSED/CANCELLED 显式拦截、CLI 统一风格、classifier 关键词优化 |
 | 2026-06-06 | v5.0.0 | 全流程迁移到 CLI 工具链：INDEX.md 登记 → `python -m aegis_toolchain start`，状态推进 → `python -m aegis_toolchain advance`，边界检查 → `python -m aegis_toolchain check`，DevLog → `python -m aegis_toolchain devlog write`；L2 5 阶段 + 4 子代理 × 2 轮；L1 新增 2 子代理审查 |

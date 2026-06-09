@@ -1,4 +1,4 @@
-# Aegis Toolchain v5.2.1
+# Aegis Toolchain v5.2.2
 
 > AI 开发治理工具链。从需求登记到验收，全流程自动化。
 

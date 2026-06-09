@@ -1,5 +1,13 @@
 # Changelog
 
+## v5.2.2 (2026-06-09) — 修复审查发现的 P0/P1 问题
+
+- L2-3 实现阶段补回改动摘要展示和用户确认步骤（Step 3 & 4）
+- BOUNDARY CHECK 不可自动验证的项标注 `⚠️ AI 自行确认`
+- 实现 `devlog list` 命令
+- `naming-and-formats.md` 状态表补全 review_design、review_code、verify
+- 全局版本号统一为 v5.2.2
+
 ## v5.2.1 (2026-06-08) — 完善入口与升级
 
 - `aegis upgrade` 命令：升级后同步项目规则文件，备份旧版，保留用户数据

@@ -152,6 +152,32 @@ Aegis_Specs/
 **state.json 在第一次 `aegis start` 后才会出现**，不是 init 时生成的。
 
 
+## 版本路线图
+
+| Phase | 计划内容 | 当前状态 |
+|-------|---------|----------|
+| **Phase 1** | CLI + state.json + classifier + 测试覆盖 | ✅ **v5.2.2 核心完成** |
+| **Phase 2** | MCP Server + YAML 状态机 | 📋 规划中 |
+| **Phase 3** | 全 MCP 生态：跨 AI 工具兼容 | 💡 设想 |
+
+### 当前版本的边界（Phase 1）
+
+✅ **做到了**
+- CLI 覆盖核心流程：init/start/check/advance/status/devlog/upgrade
+- state.json 自动管理需求阶段、进度追踪、断点续做
+- classifier 自动判定 L1/L2/L3，内嵌在 `start` 命令中
+- BOUNDARY CHECK 强制阶段约束，不满足条件不推进
+- AGENTS.md + skills 模板，AI 进项目就能自动读
+- 240 测试覆盖 + ruff + mypy 全绿
+
+⚠️ **已确认但有折中的**
+- CLI 通过 `python -m aegis_toolchain` 调用，不在 PATH（无需配置，但用户需要知道这个命令）
+- classifier（原 preprocessor 模块）不再有独立的 `aegis preprocess` 命令，内嵌在 `start` 中自动执行
+
+❌ **Phase 1 承诺但未完成的**
+- pre-commit hook → 暂缓：用户环境依赖链太长（需 pre-commit 包 + 手动 install），方案尚未成熟
+
+
 ## 许可证
 
 MIT

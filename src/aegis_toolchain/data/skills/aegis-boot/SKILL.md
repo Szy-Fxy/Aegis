@@ -73,8 +73,8 @@ Step 4: WAIT for explicit user approval (e.g., "OK", "go ahead", "approved")
 **BOUNDARY CHECK** (run `python -m aegis_toolchain check`):
 - [ ] INDEX.md has entry for current requirement (status 📐 design)?
 - [ ] design.md exists?
-- [ ] Acceptance criteria in user language?
-- [ ] User has explicitly confirmed?
+- [ ] ⚠️ AI 自行确认: Acceptance criteria in user language?
+- [ ] ⚠️ AI 自行确认: User has explicitly confirmed?
 
 **If any fails → STOP. Do not proceed to L2-2.**
 
@@ -90,8 +90,8 @@ Step 4: Fix or document all findings before proceeding
 
 **BOUNDARY CHECK** (run `python -m aegis_toolchain check`):
 - [ ] review.md exists with "设计审查" section?
-- [ ] 4 sub-agents have output?
-- [ ] All findings fixed or documented?
+- [ ] ⚠️ AI 自行确认: 4 sub-agents have output?
+- [ ] ⚠️ AI 自行确认: All findings fixed or documented?
 
 **If any fails → fix before proceeding.**
 
@@ -101,6 +101,14 @@ Step 4: Fix or document all findings before proceeding
 Step 0: python -m aegis_toolchain advance               ← 自动更新 INDEX.md 为 🔨 implementing
 Step 1: Write code according to design.md
 Step 2: Run typecheck / lint / build to verify
+Step 3: Show user a summary of changes:
+        - List of modified/added/deleted files
+        - Key implementation highlights (核心改动说明)
+        - Any deviations from design.md (如有偏离设计，需说明原因)
+Step 4: Wait for user's explicit confirmation before proceeding
+        User says "继续" / "OK" / "下一步" → proceed to L2-4
+        User points out issues → fix and repeat Step 3
+```
 ```
 
 **BOUNDARY CHECK** (run `python -m aegis_toolchain check`):
@@ -120,8 +128,8 @@ Step 3: Fix all findings before proceeding
 
 **BOUNDARY CHECK** (run `python -m aegis_toolchain check`):
 - [ ] review.md contains "代码审查" section?
-- [ ] 4 sub-agents have output?
-- [ ] All findings fixed?
+- [ ] ⚠️ AI 自行确认: 4 sub-agents have output?
+- [ ] ⚠️ AI 自行确认: All findings fixed?
 
 ##### L2-5: Verify
 
@@ -137,7 +145,7 @@ Step 5: python -m aegis_toolchain advance                           ← 自动�
 
 **BOUNDARY CHECK** (run `python -m aegis_toolchain check`):
 - [ ] verify.md exists with all criteria checked?
-- [ ] User confirmed?
+- [ ] ⚠️ AI 自行确认: User confirmed?
 - [ ] INDEX.md status = ✅ done?
 - [ ] DevLog written?
 

@@ -122,9 +122,12 @@ Aegis/rules/TempData/{主题}_{YYYY-MM-DD}.md
 | 📋 brainstorm | 方案讨论中 |
 | 📋 proposal | 方案已定，待审核 |
 | 📐 design | 技术设计中 |
+| 📋 review_design | 设计审查中 |
 | 📝 spec | 需求规格编写中 |
 | 📋 review | 审核中 |
 | 🔨 implementing | 代码实现中 |
+| 📋 review_code | 代码审查中 |
+| ✅ verify | 验收中 |
 | ✅ done | 已完成 |
 | ⏸️ paused | 暂停 |
 | ❌ cancelled | 取消 |

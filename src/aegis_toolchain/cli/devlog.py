@@ -118,6 +118,37 @@ def show(
     typer.secho(f"{'='*60}\n", fg="cyan")
 
 
+@app.command()
+def list(
+    project: Path = typer.Option(Path("."), "--project", "-p", help="项目路径"),
+) -> None:
+    """列出所有 DevLog"""
+    devlog_dir = project / "Aegis" / "rules" / "DevLogs"
+
+    if not devlog_dir.exists():
+        typer.secho("ℹ️  尚无 DevLog 记录", fg="blue")
+        return
+
+    files = sorted(devlog_dir.glob("*.md"), reverse=True)
+
+    if not files:
+        typer.secho("ℹ️  尚无 DevLog 记录", fg="blue")
+        return
+
+    typer.secho(f"\n共 {len(files)} 条 DevLog:\n", fg="green", bold=True)
+    for f in files:
+        # 文件名格式: YYYY-MM-DD-REQ-xxx-title.md
+        parts = f.stem.split('-', 3)
+        if len(parts) >= 3:
+            date = parts[0]
+            req_id = f"{parts[1]}-{parts[2]}"
+            title = parts[3] if len(parts) > 3 else ""
+            typer.secho(f"  [{date}] {req_id:12} {title}", fg="cyan")
+        else:
+            typer.secho(f"  {f.name}", fg="cyan")
+    typer.echo()
+
+
 def _open_editor(req, initial_message: str) -> str:
     """打开编辑器让用户编写 DevLog"""
     editor_cmd = os.environ.get("EDITOR", os.environ.get("VISUAL", "notepad" if os.name == "nt" else "vi"))

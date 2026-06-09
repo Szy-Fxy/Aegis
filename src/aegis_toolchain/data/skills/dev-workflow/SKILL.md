@@ -50,7 +50,7 @@ AI 根据需求关键词自动匹配技术栈文件，加载对应规则：
 ```
 1. 读取 Aegis/rules/DevLogs/ 下最新日期的 DevLog
 2. 检查 DevLog 中的「当前进度」+「下一动作」
-3. 如果 DevLog 为空或信息不足，运行 aegis status 查看是否有未完成的需求
+3. 如果 DevLog 为空或信息不足，运行 python -m aegis_toolchain status 查看是否有未完成的需求
 4. 告知用户上次进度：「上次您在 {需求名} 的 {阶段}，是否继续？」
 ```
 

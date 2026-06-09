@@ -33,9 +33,9 @@ Use the classification table in the workflow engine. **Tell the user your classi
 
 ### Step 3: Execute the Classified Workflow
 
-> **IMPORTANT**: Use the `aegis` CLI tool for ALL state management (register, advance, check, devlog).
+> **IMPORTANT**: Use the `python -m aegis_toolchain` CLI tool for ALL state management (register, advance, check, devlog).
 > Do NOT manually edit INDEX.md, do NOT manually update phase status.
-> INDEX.md 路径：`Aegis_Specs/INDEX.md`（由 `aegis init` 生成）。AI 不得在其他路径新建 INDEX.md。
+> INDEX.md 路径：`Aegis_Specs/INDEX.md`（由 `python -m aegis_toolchain init` 生成）。AI 不得在其他路径新建 INDEX.md。
 
 ---
 

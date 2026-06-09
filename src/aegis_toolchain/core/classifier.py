@@ -1,7 +1,6 @@
 """任务等级分类器 — 关键词匹配 + 规则"""
 
-from dataclasses import dataclass, field
-from typing import ClassVar
+from dataclasses import dataclass
 
 
 @dataclass

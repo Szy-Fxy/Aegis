@@ -1,7 +1,5 @@
 """Tests for core/boundary_checker.py — BOUNDARY CHECK 执行引擎"""
 
-import json
-from pathlib import Path
 
 import pytest
 
@@ -11,7 +9,6 @@ from aegis_toolchain.core.boundary_checker import (
     CheckResult,
 )
 from aegis_toolchain.core.state_manager import StateManager
-from aegis_toolchain.core.index_manager import IndexManager
 from aegis_toolchain.models.state import (
     Requirement,
     RequirementLevel,

@@ -1,9 +1,6 @@
 """Tests for CLI commands using Typer CliRunner"""
 
-import json
-from pathlib import Path
 from datetime import datetime
-import os
 
 import pytest
 from typer.testing import CliRunner

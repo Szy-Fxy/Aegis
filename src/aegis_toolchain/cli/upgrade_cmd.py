@@ -6,9 +6,9 @@ from datetime import datetime
 from pathlib import Path
 
 try:
-    from importlib.resources import files
+    import importlib.resources as _resources
 except ImportError:
-    from importlib_resources import files
+    import importlib_resources as _resources  # type: ignore[no-redef]
 
 import typer
 
@@ -45,7 +45,7 @@ def cmd_upgrade(
         raise typer.Exit(1)
 
     try:
-        data_root = files("aegis_toolchain.data")
+        data_root = Path(str(_resources.files("aegis_toolchain.data")))
     except Exception as e:
         typer.secho(f"❌ 无法找到内置规则数据: {e}", fg="red")
         raise typer.Exit(1)
@@ -56,16 +56,16 @@ def cmd_upgrade(
 
     if not has_work:
         if skipped_ts > 0:
-            typer.secho(f"\n[OK] Aegis 已是最新版本，无需升级", fg="green", bold=True)
+            typer.secho("\n[OK] Aegis 已是最新版本，无需升级", fg="green", bold=True)
             typer.secho(f"\n  保留 {skipped_ts} 个 TechStack 文件（用户定制）", fg="blue")
         else:
-            typer.secho(f"\n[OK] Aegis 已是最新版本，无需升级", fg="green", bold=True)
+            typer.secho("\n[OK] Aegis 已是最新版本，无需升级", fg="green", bold=True)
         return
 
     if dry_run:
-        typer.secho(f"\n[DRY-RUN] Aegis 升级预览", fg="cyan", bold=True)
+        typer.secho("\n[DRY-RUN] Aegis 升级预览", fg="cyan", bold=True)
     else:
-        typer.secho(f"\n[OK] Aegis 升级完成", fg="green", bold=True)
+        typer.secho("\n[OK] Aegis 升级完成", fg="green", bold=True)
 
     if new_files:
         typer.secho(f"\n  新增 {len(new_files)} 个文件:", fg="blue")
@@ -73,7 +73,7 @@ def cmd_upgrade(
             typer.secho(f"     + {f}", fg="blue")
 
     if user_changed_files:
-        typer.secho(f"\n  ⚠  以下文件内容不同，旧版已备份:", fg="yellow")
+        typer.secho("\n  ⚠  以下文件内容不同，旧版已备份:", fg="yellow")
         for f in user_changed_files:
             typer.secho(f"     {f}", fg="yellow")
 
@@ -81,7 +81,7 @@ def cmd_upgrade(
         typer.secho(f"\n  保留 {skipped_ts} 个 TechStack 文件（用户定制）", fg="blue")
 
     if dry_run:
-        typer.secho(f"\n  预览完成，运行 python -m aegis_toolchain upgrade 确认执行", fg="cyan")
+        typer.secho("\n  预览完成，运行 python -m aegis_toolchain upgrade 确认执行", fg="cyan")
         return
 
     # 确认
@@ -99,11 +99,11 @@ def cmd_upgrade(
         _cleanup_old_backups(target / ".backup")
         _ensure_backup_in_gitignore(target)
 
-    typer.secho(f"\n  保留未动:", fg="blue")
-    typer.secho(f"     DevLogs / state / TempData / Aegis_Specs / INDEX.md / AGENTS.md", fg="blue")
+    typer.secho("\n  保留未动:", fg="blue")
+    typer.secho("     DevLogs / state / TempData / Aegis_Specs / INDEX.md / AGENTS.md", fg="blue")
 
 
-def _walk_src(data_root: str) -> list[tuple[str, Path, bool]]:
+def _walk_src(data_root: Path) -> list[tuple[str, Path, bool]]:
     """遍历 data/，返回 (rel_path, src_path, is_techstack) 列表。"""
     items = []
     def _recurse(rel: str):

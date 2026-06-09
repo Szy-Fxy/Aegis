@@ -1,4 +1,4 @@
-"""aegis check — 执行 BOUNDARY CHECK"""
+"""python -m aegis_toolchain check — 执行 BOUNDARY CHECK"""
 
 from pathlib import Path
 
@@ -19,7 +19,7 @@ def cmd_check(
         state = manager.load()
     except StateCorruptedError as e:
         typer.secho(f"❌ 状态文件异常: {e.detail}", fg="red")
-        typer.secho("   建议: 检查 Aegis/state/state.json 或删除后重新运行 aegis start", fg="yellow")
+        typer.secho("   建议: 检查 Aegis/state/state.json 或删除后重新运行 python -m aegis_toolchain start", fg="yellow")
         raise typer.Exit(1)
 
     if requirement_id is None:
@@ -32,7 +32,7 @@ def cmd_check(
         req = manager.get_requirement(requirement_id)
         if req is None:
             typer.secho(f"❌ 未找到需求: {requirement_id}", fg="red")
-            typer.secho(f"   提示: 运行 'python -m aegis_toolchain status' 查看所有已登记的需求", fg="yellow")
+            typer.secho("   提示: 运行 'python -m aegis_toolchain status' 查看所有已登记的需求", fg="yellow")
             raise typer.Exit(1)
 
     checker = BoundaryChecker(project)
@@ -51,8 +51,8 @@ def cmd_check(
     typer.secho(f"\n{'─'*50}", fg="cyan")
     if report.all_passed:
         typer.secho(f"  ✅ 全部通过 ({report.passed_count}/{report.total_count})", fg="green", bold=True)
-        typer.secho(f"  可以继续: aegis advance", fg="blue")
+        typer.secho("  可以继续: python -m aegis_toolchain advance", fg="blue")
     else:
         typer.secho(f"  ❌ 未通过 ({report.passed_count}/{report.total_count})", fg="red", bold=True)
-        typer.secho(f"  请完成缺失项后重试", fg="yellow")
+        typer.secho("  请完成缺失项后重试", fg="yellow")
         raise typer.Exit(1)

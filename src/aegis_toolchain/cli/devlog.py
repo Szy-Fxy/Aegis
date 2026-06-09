@@ -1,4 +1,4 @@
-"""aegis devlog — DevLog 的生成、写入和查看"""
+"""python -m aegis_toolchain devlog — DevLog 的生成、写入和查看"""
 
 import os
 import re
@@ -8,7 +8,6 @@ from datetime import datetime
 from pathlib import Path
 
 import typer
-from loguru import logger
 
 from aegis_toolchain.core.state_manager import StateManager, StateCorruptedError
 from aegis_toolchain.utils.fs import ensure_dir
@@ -46,7 +45,7 @@ def write(
     """写入 DevLog 条目"""
     manager = StateManager(project)
     try:
-        state = manager.load()
+        _state = manager.load()
     except StateCorruptedError as e:
         typer.secho(f"❌ 状态文件异常: {e.detail}", fg="red")
         typer.secho("   建议: 检查 Aegis/state/state.json 或删除后重新运行 python -m aegis_toolchain start", fg="yellow")

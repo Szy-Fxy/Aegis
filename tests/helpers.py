@@ -1,6 +1,5 @@
 """测试辅助函数：快速构造 Requirement 和 AegisState"""
 
-from datetime import datetime
 
 from aegis_toolchain.models.state import (
     AegisState,

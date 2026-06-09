@@ -1,6 +1,5 @@
-"""aegis status — 查看项目当前状态"""
+"""python -m aegis_toolchain status — 查看项目当前状态"""
 
-import json
 from pathlib import Path
 
 import typer
@@ -20,7 +19,7 @@ def cmd_status(
         state = manager.load()
     except StateCorruptedError as e:
         typer.secho(f"❌ 状态文件异常: {e.detail}", fg="red")
-        typer.secho("   建议: 检查 Aegis/state/state.json 或删除后重新运行 aegis start", fg="yellow")
+        typer.secho("   建议: 检查 Aegis/state/state.json 或删除后重新运行 python -m aegis_toolchain start", fg="yellow")
         raise typer.Exit(1)
 
     if json_output:
@@ -79,7 +78,7 @@ def _print_requirement_detail(req) -> None:
         typer.secho(f"  变更文件: {', '.join(req.files_changed)}")
 
     bc = req.boundary_checks
-    typer.secho(f"\n  BOUNDARY CHECK:", fg="yellow")
+    typer.secho("\n  BOUNDARY CHECK:", fg="yellow")
     checks = [
         ("DevLog 已写入", bc.devlog_written),
     ]

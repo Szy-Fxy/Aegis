@@ -3,7 +3,6 @@
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from loguru import logger
 
 from aegis_toolchain.models.state import PHASE_DISPLAY_MAP, Requirement, RequirementLevel, RequirementPhase
 
@@ -235,7 +234,7 @@ class BoundaryChecker:
             return CheckResult(
                 name="INDEX.md 登记",
                 passed=False,
-                detail=f"INDEX.md 不存在",
+                detail="INDEX.md 不存在",
             )
 
         content = self._read_safe(index_path)

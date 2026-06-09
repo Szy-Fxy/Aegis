@@ -29,12 +29,12 @@ def main(
 
 
 # ── 单命令：直接注册 ──────────────────────
-from aegis_toolchain.cli.start import cmd_start
-from aegis_toolchain.cli.check import cmd_check
-from aegis_toolchain.cli.advance import cmd_advance
-from aegis_toolchain.cli.status import cmd_status
-from aegis_toolchain.cli.init_cmd import init_project
-from aegis_toolchain.cli.upgrade_cmd import cmd_upgrade
+from aegis_toolchain.cli.start import cmd_start  # noqa: E402
+from aegis_toolchain.cli.check import cmd_check  # noqa: E402
+from aegis_toolchain.cli.advance import cmd_advance  # noqa: E402
+from aegis_toolchain.cli.status import cmd_status  # noqa: E402
+from aegis_toolchain.cli.init_cmd import init_project  # noqa: E402
+from aegis_toolchain.cli.upgrade_cmd import cmd_upgrade  # noqa: E402
 
 app.command(name="start", help="开始一个新需求")(cmd_start)
 app.command(name="check", help="执行 BOUNDARY CHECK")(cmd_check)
@@ -44,6 +44,6 @@ app.command(name="init", help="初始化项目 Aegis 规则文件")(init_project
 app.command(name="upgrade", help="升级后同步项目规则文件")(cmd_upgrade)
 
 # ── 多命令组：add_typer ──────────────────
-from aegis_toolchain.cli.devlog import app as devlog_app
+from aegis_toolchain.cli.devlog import app as devlog_app  # noqa: E402
 
 app.add_typer(devlog_app, name="devlog", help="DevLog 操作")

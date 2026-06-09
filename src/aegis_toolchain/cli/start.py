@@ -1,9 +1,8 @@
-"""aegis start — 开始一个新需求"""
+"""python -m aegis_toolchain start — 开始一个新需求"""
 
 from pathlib import Path
 
 import typer
-from loguru import logger
 
 from aegis_toolchain.core.state_manager import StateManager
 from aegis_toolchain.core.index_manager import IndexManager
@@ -26,7 +25,7 @@ def cmd_start(
         typer.secho(f"🔍 自动分类: {level} (置信度 {result.confidence:.0%})", fg="cyan")
         typer.secho(f"   理由: {result.reason}", fg="cyan")
         if result.is_uncertain:
-            typer.secho(f"   ⚠️ 置信度较低，如需修改请指定 --level", fg="yellow")
+            typer.secho("   ⚠️ 置信度较低，如需修改请指定 --level", fg="yellow")
 
     # 2. 校验 level
     level_upper = level.upper()
@@ -67,9 +66,9 @@ def cmd_start(
     # 6. 输出结果
     typer.secho(f"\n✅ 已登记 {req.id} [{req.level.value}] {req.title}", fg="green", bold=True)
     typer.secho(f"   阶段: {req.phase.display}", fg="green")
-    typer.secho(f"   下一步: python -m aegis_toolchain check", fg="blue")
+    typer.secho("   下一步: python -m aegis_toolchain check", fg="blue")
 
     # 首次使用提示
     rules_dir = project / "Aegis" / "rules"
     if not rules_dir.exists():
-        typer.secho(f"\n💡 建议运行 'python -m aegis_toolchain init' 安装规则文件（全局规范、技术栈、工作流）", fg="bright_blue")
+        typer.secho("\n💡 建议运行 'python -m aegis_toolchain init' 安装规则文件（全局规范、技术栈、工作流）", fg="bright_blue")

@@ -1,7 +1,6 @@
 """Tests for hooks/pre_commit.py — commit 前 Aegis 合规检查"""
 
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from aegis_toolchain.hooks.pre_commit import main
 

@@ -1,12 +1,12 @@
-"""aegis init — 初始化项目 Aegis 规则文件"""
+"""python -m aegis_toolchain init — 初始化项目 Aegis 规则文件"""
 
 import shutil
 from pathlib import Path
 
 try:
-    from importlib.resources import files
+    import importlib.resources as _resources
 except ImportError:
-    from importlib_resources import files  # Python < 3.11 fallback
+    import importlib_resources as _resources  # type: ignore[no-redef]  # Python < 3.11 fallback
 
 import typer
 
@@ -31,7 +31,7 @@ def init_project(
             raise typer.Exit(0)
 
     try:
-        data_root = files("aegis_toolchain.data")
+        data_root = _resources.files("aegis_toolchain.data")
     except Exception as e:
         typer.secho(f"❌ 无法找到内置规则数据: {e}", fg="red")
         raise typer.Exit(1)
@@ -93,7 +93,7 @@ def init_project(
     agents_status = None  # None=未知, "created"=新建, "skipped"=跳过, "overwritten"=覆盖
     agents_src = data_root / "AGENTS.md"
     agents_dst = cwd / "AGENTS.md"
-    if agents_src.exists() and agents_src.is_file():
+    if agents_src.exists() and agents_src.is_file():  # type: ignore[attr-defined]
         if agents_dst.exists() and not force:
             typer.secho("⚠️  AGENTS.md 已存在，跳过", fg="yellow")
             agents_status = "skipped"
@@ -112,17 +112,17 @@ def init_project(
     if agents_status in ("created", "overwritten"):
         file_count += 1  # AGENTS.md 在 Aegis/ 目录外，单独计数
     typer.secho(f"\n[OK] Aegis 初始化完成 ({file_count} 个文件)", fg="green", bold=True)
-    typer.secho(f"\n  >> 项目已配置:", fg="blue")
-    typer.secho(f"     开发流程规则     Aegis/rules/", fg="blue")
-    typer.secho(f"     AI 协作规范      Aegis/skills/", fg="blue")
+    typer.secho("\n  >> 项目已配置:", fg="blue")
+    typer.secho("     开发流程规则     Aegis/rules/", fg="blue")
+    typer.secho("     AI 协作规范      Aegis/skills/", fg="blue")
     if agents_status == "skipped":
-        typer.secho(f"     协作入口文件      AGENTS.md (已存在，跳过)", fg="blue")
+        typer.secho("     协作入口文件      AGENTS.md (已存在，跳过)", fg="blue")
     elif agents_status in ("created", "overwritten"):
-        typer.secho(f"     协作入口文件      AGENTS.md", fg="blue")
-    typer.secho(f"     需求追踪          Aegis_Specs/", fg="blue")
-    typer.secho(f"\n  >> 下一步:", fg="blue")
-    typer.secho(f"     python -m aegis_toolchain start \"需求标题\" -l L2", fg="blue")
-    typer.secho(f"\n  >> 使用指南: https://github.com/Szy-Fxy/Aegis/blob/main/USAGE.md", fg="blue")
+        typer.secho("     协作入口文件      AGENTS.md", fg="blue")
+    typer.secho("     需求追踪          Aegis_Specs/", fg="blue")
+    typer.secho("\n  >> 下一步:", fg="blue")
+    typer.secho("     python -m aegis_toolchain start \"需求标题\" -l L2", fg="blue")
+    typer.secho("\n  >> 使用指南: https://github.com/Szy-Fxy/Aegis/blob/main/USAGE.md", fg="blue")
 
 
 def _copy_dir(data_root, rel_src: str, dst: Path) -> None:

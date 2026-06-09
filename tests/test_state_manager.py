@@ -3,7 +3,6 @@
 import pytest
 
 from aegis_toolchain.models.state import (
-    Requirement,
     RequirementLevel,
     RequirementPhase,
 )

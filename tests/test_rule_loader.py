@@ -1,7 +1,6 @@
 """Tests for core/rule_loader.py — 规则文件加载"""
 
 import pytest
-from pathlib import Path
 
 from aegis_toolchain.core.rule_loader import RuleLoader
 
